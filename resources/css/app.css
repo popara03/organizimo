@@ -1,0 +1,112 @@
+/* fonts */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jersey+20&display=swap');
+.font-jersey{
+  font-family: "Jersey 20", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.25rem !important;
+}
+.font-montserrat{
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@import 'tailwindcss';
+@plugin 'tailwindcss-animate';
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@theme{
+  --color-primary: #1E1E1E;
+  --color-secondary: #EEEEEE;
+  --color-tertiary: #DADADA;
+  --color-accent-lime: #9EB41D;
+  --color-accent-orange: #F8961E;
+  --color-accent-red: #F94144;
+  --color-accent-purple: #AE2695;
+  --color-accent-blue: #369AC3;
+}
+
+@layer base{
+  html{
+    font-size: 12px;
+  }
+  @media screen and (min-width: 320px) {
+    html {
+      font-size: 14px;
+    }
+  }
+  @media screen and (min-width: 768px) {
+    html {
+      font-size: 16px;
+    }
+  }
+  @media screen and (min-width: 1920px) {
+    html {
+      font-size: 18px;
+    }
+  }
+
+  *{
+    font-family: "Montserrat", sans-serif;
+    color: var(--color-primary);
+  }
+
+  .toaster *{
+    color: var(--color-secondary) !important;
+  }
+
+  body{
+    background-color: var(--color-secondary);
+  }
+
+  a:hover{
+    opacity: 0.5;
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  .scrolling {
+    animation: scroll-left 20s linear infinite;
+  }
+
+  /* nav */
+  .openMenu{
+    left: 16.6667% !important;
+  }
+
+  .activeBurger span:nth-child(1){
+    width: 2rem !important;
+  }
+
+  .activeBurger span:nth-child(2){
+    width: 1.5rem !important;
+  }
+
+  .activeBurger span:nth-child(3){
+    width: 1rem !important;
+  }
+
+  /* nav fix for small heights (rotated mobile) */
+  @media screen and (max-height: 500px) and (max-width: 768px){
+    html, body{
+      overflow-x: hidden;
+    }
+    nav {
+      position: relative !important;
+    }
+    nav > ul{
+      position: absolute !important;
+      height: fit-content;
+    }
+  }
+}
