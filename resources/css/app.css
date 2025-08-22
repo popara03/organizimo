@@ -54,6 +54,11 @@
     color: var(--color-primary);
   }
 
+  ::selection {
+    background: #3b82f6 !important;
+    color: var(--color-secondary);
+  }
+
   .toaster *{
     color: var(--color-secondary) !important;
   }
