@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 
 export default function Welcome() {
     return (
-        <div className="relative w-full pt-8 flex gap-8 flex-col justify-between overflow-hidden">
+        <div className="relative w-full flex gap-8 flex-col justify-between overflow-hidden">
             <div className="px-4 flex flex-col gap-4">
                 <h1 className="!text-5xl sm:!text-6xl md:!text-8xl">
                     <b>Share. Connect. Solve.</b>

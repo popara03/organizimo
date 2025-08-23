@@ -26,7 +26,7 @@ createInertiaApp({
         root.render(
             <Providers>
                 <Nav />
-                <main className="min-h-[calc(100vh-100px)]">
+                <main className="min-h-[calc(100vh-100px)] py-8">
                     <App {...props} />
                 </main>
                 <Footer />

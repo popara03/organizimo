@@ -10,17 +10,21 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+// for guest users
 Route::middleware('guest')->group(function () {
+    // register
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
+    // login
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
+    // to add later
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 
@@ -34,7 +38,13 @@ Route::middleware('guest')->group(function () {
         ->name('password.store');
 });
 
+// for authenticated users
 Route::middleware('auth')->group(function () {
+    // logout
+    Route::get('logout', [AuthenticatedSessionController::class, 'destroy'])
+        ->name('logout');
+
+    // to add later
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
 
@@ -52,6 +62,5 @@ Route::middleware('auth')->group(function () {
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store'])
         ->middleware('throttle:6,1');
 
-    Route::get('logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout');
+
 });

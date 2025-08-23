@@ -66,7 +66,7 @@ export default function Register() {
         <Form
             method="post"
             action={'/register'}
-            className="flex flex-col gap-6"
+            className="flex flex-col gap-4"
             transform={(data) => {
                 if(files.length === 0){
                     return { ...data };
@@ -189,7 +189,7 @@ export default function Register() {
                                 className='w-4 h-4 accent-accent-purple'
                                 value={1} //so it submits 1 in stead of 'on' when checked
                             />
-                            <Label htmlFor="terms" required>I agree to the <Link href="/terms" className='text-blue-500'>terms and conditions</Link>.</Label>
+                            <Label htmlFor="terms" required>I agree to the <Link href="/terms" className='text-blue-500 underline'>terms and conditions</Link>.</Label>
                         </div>
                         <InputError message={errors.terms} />
                     </div>
@@ -201,7 +201,7 @@ export default function Register() {
 
                     <div className="text-center text-sm">
                         <span>Already have an account? </span>
-                        <Link href={route('login')} className='text-blue-500'>
+                        <Link href={route('login')} className='text-blue-500 text-blue-500 underline'>
                             Log in
                         </Link>
                     </div>
