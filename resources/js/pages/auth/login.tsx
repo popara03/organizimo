@@ -60,7 +60,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 <InputError message={errors.password} />
                             </div>
 
-                            <div className="flex items-center space-x-3">
+                            {/* <div className="flex items-center space-x-3">
                                 <Input
                                     type="checkbox"
                                     id="remember"
@@ -69,7 +69,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                     value={1} //so it submits 1 in stead of 'on' when checked
                                 />
                                 <Label htmlFor="remember">Remember me</Label>
-                            </div>
+                            </div> */}
 
                             <Button type="submit" className="w-full text-secondary font-jersey cursor-pointer">
                                 {processing && <LoaderCircle className="h-7 w-7 stroke-secondary animate-spin" />}
