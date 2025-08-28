@@ -54,7 +54,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                     type="password"
                                     name="password"
                                     required
-                                    tabIndex={2}
                                     autoComplete="current-password"
                                     placeholder="Password"
                                 />

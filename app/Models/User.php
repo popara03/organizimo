@@ -6,7 +6,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    //ono sto se moze insertovati
+    //ono sto se moze insertovati, sprecava zloupotrebe unosa
     protected $fillable = [
         'name',
         'surname',
@@ -22,6 +22,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    // za definisanje konverzija podataka tabele u odredjeni tip
     protected function casts(): array
     {
         return [
