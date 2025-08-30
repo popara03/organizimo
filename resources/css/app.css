@@ -114,4 +114,15 @@
       height: fit-content;
     }
   }
+
+  .scrollbar::-webkit-scrollbar{
+    background: transparent;
+    width: 8px;
+    overflow: hidden;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: #3d3d3d;
+    border-radius: 9999px;
+  }
 }
