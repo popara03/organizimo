@@ -1,37 +1,16 @@
 import {Link} from '@inertiajs/react'
 import {Button} from '@/components/ui/button'
-import { useState } from 'react'
-
-export type NotificationProps = {
-    id: number
-    post_id: number
-    text: string
-    time: string
-    is_read: boolean
-    handleCheckIsAllRead: (id:number, value:boolean) => void
-    handleRemoveDeletedNotification: (id:number) => void
-}
+import { useContext } from 'react'
+import { NotificationContext, NotificationProps } from '@/providers/notificationProvider'
 
 const Notification = ( props: NotificationProps) => {
-    const markNotificationAsRead = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
 
-        // TODO: Make API call to mark notification as read
+    const ctx = useContext(NotificationContext);
+    
+    if (!ctx)
+        throw new Error('Notification must be used within a NotificationProvider');
 
-            props.handleCheckIsAllRead(props.id, !props.is_read);
-
-        console.log("Mark notification as read", props.id)
-    }
-
-    const deleteNotification = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-
-        // TODO: Make API call to delete notification
-
-            props.handleRemoveDeletedNotification(props.id);
-
-        console.log("Delete notification", props.id)
-    }
+    const { markAsRead, deleteNotification } = ctx;
 
     return (
     <Link
@@ -46,7 +25,10 @@ const Notification = ( props: NotificationProps) => {
         <div className="flex gap-2">
             <Button size='icon'
             className="bg-secondary/5 cursor-pointer"
-            onClick={markNotificationAsRead}
+            onClick={(e) => {
+                e.preventDefault();
+                markAsRead(props.id);
+            }}
             >
                 {!props.is_read ? (
                     <svg className="!w-6 !h-6 *:fill-secondary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -74,8 +56,10 @@ const Notification = ( props: NotificationProps) => {
             <Button
             size='icon'
             className="bg-secondary/5 cursor-pointer"
-            onClick={deleteNotification}
-            >
+            onClick={(e) => {
+                e.preventDefault();
+                deleteNotification(props.id);
+            }}>
                 <svg className="!w-6 !h-6 *:fill-secondary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path  d="M20 6V14H19V22H18V23H6V22H5V14H4V6H20Z" fill="black"/>
                 <path  d="M21 3V5H3V3H4V2H9V1H15V2H20V3H21Z" fill="black"/>

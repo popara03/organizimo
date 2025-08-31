@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Toaster } from 'sonner';
 
-const Providers = ( { children } : { children: ReactNode } ) => {
+const Provider = ( { children } : { children: ReactNode } ) => {
   return (
     <>
       <Toaster
@@ -16,4 +16,4 @@ const Providers = ( { children } : { children: ReactNode } ) => {
   )
 }
 
-export default Providers;
+export default Provider;

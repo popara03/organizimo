@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { Link, usePage } from "@inertiajs/react";
 import {
   DropdownMenu,
@@ -8,7 +8,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "../ui/button";
-import Notification, {NotificationProps} from "./notification";
+import Notification from "./notification";
+import { NotificationContext, NotificationProps } from "@/providers/notificationProvider";
 
 const Nav = () => {
     const {props} : any = usePage();
@@ -20,60 +21,9 @@ const Nav = () => {
         setIsMenuOpen(!isMenuOpen);
     };
 
-    // fetch last 10 notifications from backend
-    const [notifications, setNotifications] = useState([
-    { id: 1, post_id: 1, text: "Novi komentar od Marko Jovanovic na vašem postu Markaaaaaaaaaaaaa", time: "5 min ago", is_read: false },
-    { id: 2, post_id: 2, text: "Diskusija \"Da li je velicina bitna?\" koju ste pratili je zatvorena.", time: "10 min ago", is_read: false },
-    { id: 3, post_id: 3, text: "Novi odgovor od Ana Nikolic na vašem postu Post broj tri", time: "30 min ago", is_read: false },
-    { id: 4, post_id: 4, text: "Novi komentar od Petar Petrovic na vašem postu Cetvrti post", time: "1 hour ago", is_read: true },
-    { id: 5, post_id: 5, text: "Diskusija \"Kako nauciti React?\" koju ste pratili je zatvorena.", time: "2 hours ago", is_read: true },
-    { id: 6, post_id: 6, text: "Novi odgovor od Jovana Jovanovic na vašem postu Post broj sest", time: "3 hours ago", is_read: true },
-    { id: 7, post_id: 7, text: "Novi odgovor od Jovana Jovanovic na vašem postu Post broj sest", time: "3 hours ago", is_read: true },
-    { id: 8, post_id: 8, text: "Novi odgovor od Jovana Jovanovic na vašem postu Post broj sest", time: "3 hours ago", is_read: true },
-    { id: 9, post_id: 9, text: "Novi odgovor od Jovana Jovanovic na vašem postu Post broj sest", time: "3 hours ago", is_read: true },
-    { id: 10, post_id: 10, text: "Novi odgovor od Jovana Jovanovic na vašem postu Post broj sest", time: "3 hours ago", is_read: true },
-    ]);
-
-    // check if all notifications are read on load
-    const [isAllRead, setIsAllRead] = useState(false);
-
-    const checkIsAllRead = () => {
-        setIsAllRead(notifications.every((n) => n.is_read));
-    };
-
-    useEffect(() => {
-        checkIsAllRead();
-    }, [notifications])
-
-    //child component handler for each notification status change
-    const handleCheckIsAllRead = (id:number, value:boolean) => {
-        let n  = notifications.find((n) => n.id === id);
-        
-        if(n){
-            n.is_read = value;
-            setNotifications([...notifications]);
-        }
-        else{
-            console.error("Notification with passed ID not found", id);
-        }
-    };
-
-    // child component handler for each notification removal
-    const handleRemoveDeletedNotification = (id:number) => {
-        setNotifications(notifications.filter((n) => n.id !== id));
-    };
-
-    // mark all notifications as read
-    const markAllAsRead = () => {
-        if(isAllRead) return;
-
-        // TODO: Make API call to mark all notifications as read, special endpoint /notifications/mark-all-as-read
-        
-        notifications.forEach((n) => n.is_read = true);
-        setNotifications([...notifications]);
-        
-        console.log("All notifications marked as read");
-    }
+    // get notification context
+    const ctx = useContext(NotificationContext);
+    const { notifications, isAllRead, markAllAsRead } = ctx;
 
     return (
     <nav className="z-50 sticky top-0 left-0 flex justify-between items-center w-full h-[60px] px-4 font-jersey bg-primary *:text-secondary a:font-jersey border-b border-secondary/10 ease-in-out transition-all duration-300">
@@ -157,12 +107,10 @@ const Nav = () => {
                                 <p className="w-full h-full flex justify-center items-center px-4 py-2 text-secondary text-center">Crickets… no notifications here 🦗</p>
                             )}
 
-                            {notifications.map((notification) => (
+                            {notifications.map(( notification : NotificationProps) => (
                                 <DropdownMenuItem key={notification.id} className="p-0 flex flex-col gap-2 rounded-none border-b border-secondary/10 hover:bg-secondary/5">
                                     <Notification
                                     {...notification}
-                                    handleCheckIsAllRead={handleCheckIsAllRead}
-                                    handleRemoveDeletedNotification={handleRemoveDeletedNotification}
                                     />
                                 </DropdownMenuItem>
                                 ))}
