@@ -13,7 +13,8 @@ class User extends Authenticatable
         'current_position',
         'email',
         'password',
-        'image'
+        'image',
+        'role_id'
     ];
 
     //ono sto se nece vracati u response-u kad se pozovu Auth::user() ili User::all

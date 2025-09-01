@@ -14,7 +14,6 @@ import { NotificationContext, NotificationProps } from "@/providers/notification
 const Nav = () => {
     const {props} : any = usePage();
     const user = props.user;
-
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     
     const handleBurgerClick = () => {
@@ -140,7 +139,7 @@ const Nav = () => {
                             <DropdownMenuTrigger asChild>
                                 <div className="flex justify-center items-center w-8 h-8 rounded-full bg-secondary overflow-hidden border border-secondary cursor-pointer select-none hover:opacity-50">
                                     { user.image ?
-                                        <img src={'/storage/'+user.image} alt={"avatar"} className="w-full h-full object-cover object-center select-none" />
+                                        <img src={'/storage/'+user.image} alt={"avatar"} className="w-full h-full object-cover object-center select-none scale-125" />
                                     :
                                         <img src="/icons/user.svg" alt="avatar" className="relative -bottom-0.5 w-8 h-8"/>
                                     }
@@ -155,7 +154,7 @@ const Nav = () => {
                                     <Link href="/profile" className="p-2 font-jersey text-secondary block w-full h-fit hover:opacity-100 hover:bg-secondary/5">Profile</Link>
                                 </DropdownMenuItem>
 
-                                {user.isAdmin && (
+                                {user.role_id === 2 && (
                                     <DropdownMenuItem className="p-0 border-b border-secondary/10 hover:bg-secondary/5">
                                         <Link href="/admin" className="p-2 font-jersey text-secondary block w-full h-fit hover:opacity-100 hover:bg-secondary/5">Admin panel</Link>
                                     </DropdownMenuItem>
@@ -172,7 +171,7 @@ const Nav = () => {
                     <div className="block md:hidden text-secondary">
                         <Link href="/profile" className="font-jersey block w-full h-fit md:w-auto p-4 md:p-0 bg-primary md:bg-transparent border-b md:border-0 border-secondary/10">Profile</Link>
                         
-                        {user.isAdmin && (
+                        {user.role_id === 2 && (
                             <Link href="/admin" className="font-jersey block w-full h-fit md:w-auto p-4 md:p-0 bg-primary md:bg-transparent border-b md:border-0 border-secondary/10">Admin panel</Link>
                         )}
 
