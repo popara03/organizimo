@@ -3,41 +3,39 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Settings\ProfileUpdateRequest;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class ProfileController extends Controller
 {
     /**
-     * Show the user's profile settings page.
-     */
-    public function edit(Request $request): Response
-    {
-        return Inertia::render('settings/profile', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-            'status' => $request->session()->get('status'),
-        ]);
-    }
-
-    /**
      * Update the user's profile settings.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request)
     {
-        $request->user()->fill($request->validated());
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'position' => ['nullable', 'string', 'max:255'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+        ]);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $user = $request->user();
+        
+        //bezbednija (samo sta je proslo validaciju) i kraca varijanta za update (ne svojstvo po svojstvo)
+        $user->fill($validated);
+
+        // extra check for image, since it can pass validation as null and result in losing the existing image
+        if($request->hasFile('image')) {
+            $user->image = $request->file('image')->store('images', 'public');
         }
 
-        $request->user()->save();
+        if($user->isDirty()) {
+            $user->save();
+            Auth::setUser($user->fresh());
+        }
 
-        return to_route('profile.edit');
+        return back();
     }
 
     /**

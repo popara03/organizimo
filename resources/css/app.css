@@ -125,4 +125,10 @@
     background: #3d3d3d;
     border-radius: 9999px;
   }
+
+  /* fixes the radix ddl-scrollbar issue */
+  html body[data-scroll-locked] {
+    margin-right: 0 !important;
+    overflow-y: auto !important;
+  }
 }

@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -13,16 +13,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+
+    Route::get('profile', function(){
+        return Inertia::render('profile');
+    })->name('profile');
 });
 
 // test route
-Route::post('formPrint', function(Request $request){
+Route::post('print', function(Request $request){
     return dd($request->all());
-})->name('formPrint');
-
-Route::get('mjau', function () {
-    return dd(User::find(4));
-});
+})->name('print');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
+require __DIR__.'/api.php';

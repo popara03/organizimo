@@ -9,15 +9,14 @@ class User extends Authenticatable
     //ono sto se moze insertovati, sprecava zloupotrebe unosa
     protected $fillable = [
         'name',
-        'surname',
-        'current_position',
         'email',
         'password',
         'image',
-        'role_id'
+        'role_id',
+        'position'
     ];
 
-    //ono sto se nece vracati u response-u kad se pozovu Auth::user() ili User::all
+    //ono sto se nece vracati u response-u kad se vrati kao JSON/Array, ne vazi u tvom PHP kodu vec samo ako se koristi kao API
     protected $hidden = [
         'password',
         'remember_token',

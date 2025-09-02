@@ -195,13 +195,12 @@ export default function Register() {
                     </div>
 
                     <Button type="submit" className="w-full text-secondary font-jersey cursor-pointer">
-                        {processing && <LoaderCircle className="h-7 w-7 stroke-secondary animate-spin" />}
-                        {!processing && 'Create account'}
+                        {processing ? <LoaderCircle className="h-7 w-7 stroke-secondary animate-spin" /> : 'Create account'}
                     </Button>
 
                     <div className="text-center text-sm">
                         <span>Already have an account? </span>
-                        <Link href={route('login')} className='text-blue-500 text-blue-500 underline'>
+                        <Link href={route('login')} className='text-blue-500 underline'>
                             Log in
                         </Link>
                     </div>
