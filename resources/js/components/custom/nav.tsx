@@ -150,18 +150,18 @@ const Nav = () => {
                                 className="w-36 p-0 bg-primary rounded-none rounded-b-2xl overflow-hidden"
                                 sideOffset={14}
                             >
-                                <DropdownMenuItem className="p-0 border-b border-secondary/10 hover:bg-secondary/5">
-                                    <Link href="/profile" className="p-2 font-jersey text-secondary block w-full h-fit hover:opacity-100 hover:bg-secondary/5">Profile</Link>
+                                <DropdownMenuItem asChild className="p-0 border-b border-secondary/10 hover:bg-secondary/5">
+                                    <Link href="/profile" className="p-2 font-jersey text-secondary block w-full h-fit hover:opacity-100 hover:bg-secondary/5 cursor-pointer">Profile</Link>
                                 </DropdownMenuItem>
 
                                 {user.role_id === 2 && (
-                                    <DropdownMenuItem className="p-0 border-b border-secondary/10 hover:bg-secondary/5">
-                                        <Link href="/admin" className="p-2 font-jersey text-secondary block w-full h-fit hover:opacity-100 hover:bg-secondary/5">Admin panel</Link>
+                                    <DropdownMenuItem asChild className="p-0 border-b border-secondary/10 hover:bg-secondary/5">
+                                        <Link href="/admin" className="p-2 font-jersey text-secondary block w-full h-fit hover:opacity-100 hover:bg-secondary/5 cursor-pointer">Admin panel</Link>
                                     </DropdownMenuItem>
                                 )}
 
-                                <DropdownMenuItem className="p-0 border-b border-secondary/10 hover:bg-secondary/5">
-                                    <Link href="/logout" className="p-2 font-jersey text-secondary block w-full h-fit hover:opacity-100 hover:bg-secondary/5">Logout</Link>
+                                <DropdownMenuItem asChild className="p-0 border-b border-secondary/10 hover:bg-secondary/5">
+                                    <Link href="/logout" className="p-2 font-jersey text-secondary block w-full h-fit hover:opacity-100 hover:bg-secondary/5 cursor-pointer">Logout</Link>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>

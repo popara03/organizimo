@@ -10,20 +10,11 @@ import { toast } from "sonner";
 const Profile = () => {
     const { user } = usePage().props as any;
 
-    const [newImage, setNewImage] = useState<File | null>(null);
-    
+    const [newImage, setNewImage] = useState<File>();
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        
-        if (file) {
-            const reader = new FileReader();
-            
-            reader.onloadend = () => {
-                setNewImage(file);
-            };
-
-            reader.readAsDataURL(file);
-        }
+        setNewImage(file);
     };
 
     return (
