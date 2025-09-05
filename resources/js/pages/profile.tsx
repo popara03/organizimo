@@ -1,4 +1,4 @@
-import { Form, router, usePage } from "@inertiajs/react"
+import { Form, Head, router, usePage } from "@inertiajs/react"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -19,6 +19,8 @@ const Profile = () => {
 
     return (
     <div className="px-4">
+        <Head title="Profile" />
+
         {/* User details */}
         <Form
         action="/update-profile"

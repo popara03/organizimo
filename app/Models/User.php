@@ -2,6 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Group;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -29,5 +34,14 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function role() : BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function groups() : BelongsToMany{
+        return $this->belongsToMany(Group::class);
     }
 }

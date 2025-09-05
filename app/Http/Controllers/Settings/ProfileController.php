@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
-    /**
-     * Update the user's profile settings.
-     */
     public function update(Request $request)
     {
         $validated = $request->validate([

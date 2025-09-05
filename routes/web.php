@@ -1,17 +1,28 @@
 <?php
 
+use App\Http\Controllers\AdminController;
+use App\Http\Middleware\CheckUserRole;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Models\Group;
+
+// test route
+Route::post('print', function(Request $request){
+    return dd($request->all());
+})->name('print');
 
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->middleware('guest')->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+
+Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+        // todo: return groups allowed for this user only
+        return Inertia::render('dashboard', [
+            'groups' => Group::all()
+        ]);
     })->name('dashboard');
 
     Route::get('profile', function(){
@@ -19,10 +30,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('profile');
 });
 
-// test route
-Route::post('print', function(Request $request){
-    return dd($request->all());
-})->name('print');
+
+Route::middleware(['auth', CheckUserRole::class])->group(function () {
+    Route::get('admin', [AdminController::class, 'index'])->name('admin');
+
+    Route::get('admin/groups', [AdminController::class, 'groups'])->name('admin.groups');
+
+    Route::get('admin/users', [AdminController::class, 'users'])->name('admin.users');
+});
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
