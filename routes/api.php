@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\admin\GroupController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
+use App\Http\Middleware\CheckUserRole;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function(){
@@ -12,4 +14,10 @@ Route::middleware('auth')->group(function(){
     // change password
     Route::post('change-password', [PasswordController::class, 'update'])
         ->name('change-password');
+});
+
+Route::middleware('auth', CheckUserRole::class)->group(function(){
+    // group management
+    Route::post('create-group', [GroupController::class, 'store'])
+        ->name('create-group');
 });

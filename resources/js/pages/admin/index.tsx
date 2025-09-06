@@ -1,13 +1,11 @@
-import Sidebar from "@/components/custom/sidebar";
 import { Head } from "@inertiajs/react";
+import AdminLayout from "@/layouts/admin/adminLayout";
 
 const Admin = () => {
   return (
     <div className="flex-1 px-4 ps-12 flex flex-col">
       <Head title="Admin Panel" />
 
-      <Sidebar/>
-      
       <h1 className='font-jersey !text-2xl'>Admin Panel</h1>
 
       <div className="flex-1 flex justify-center items-center">
@@ -16,5 +14,7 @@ const Admin = () => {
     </div>
   )
 }
+
+Admin.layout = (page: React.ReactNode) => <AdminLayout>{page}</AdminLayout>;
 
 export default Admin

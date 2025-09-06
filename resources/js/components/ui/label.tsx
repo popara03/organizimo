@@ -20,8 +20,8 @@ function Label({
       )}
       {...props}
     >
-      {props.required && <span className="text-red-500">*</span>}
       {props.children}
+      {props.required && <span className="text-accent-red">*</span>}
     </LabelPrimitive.Root>
   )
 }

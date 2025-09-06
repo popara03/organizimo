@@ -10,7 +10,7 @@ export default function Dashboard() {
     <div className="flex-1 px-4 ps-12 flex flex-col">
         <Head title="Dashboard" />
 
-        <Sidebar groupList={groups} />
+        <Sidebar data={groups} />
 
         <h1 className='font-jersey !text-2xl'>Hello{user && `, ${user.name}`}!</h1>
     </div>

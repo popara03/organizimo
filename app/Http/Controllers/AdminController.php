@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Group;
+use App\Models\Role;
 use App\Models\User;
 use Inertia\Inertia;
 
@@ -27,10 +28,9 @@ class AdminController extends Controller
 
     public function users()
     {
-        $users = User::all();
-
         return Inertia::render('admin/admin-users', [
-            'users' => $users
+            'users' => User::all(),
+            'roles' => Role::all()
         ]);
     }
 }

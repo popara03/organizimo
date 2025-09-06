@@ -12,6 +12,8 @@ class Group extends Model
        'id',
        'name',
        'color',
+       'is_ffa',
+       'users',
    ];
 
     protected $hidden = [

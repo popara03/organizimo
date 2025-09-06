@@ -17,8 +17,10 @@ class User extends Authenticatable
         'email',
         'password',
         'image',
+        'position',
         'role_id',
-        'position'
+        'roles',
+        'groups',
     ];
 
     //ono sto se nece vracati u response-u kad se vrati kao JSON/Array, ne vazi u tvom PHP kodu vec samo ako se koristi kao API

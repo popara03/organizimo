@@ -1,5 +1,4 @@
 import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -43,9 +42,9 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             <div className="flex items-center">
                                 <Label htmlFor="password" required>Password</Label>
                                 {canResetPassword && (
-                                    <TextLink href={route('password.request')} className="ml-auto text-sm" tabIndex={5}>
+                                    <Link href={route('password.request')} className="ml-auto text-sm" tabIndex={5}>
                                         Forgot password?
-                                    </TextLink>
+                                    </Link>
                                 )}
                             </div>
                             <Input
