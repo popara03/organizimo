@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Group;
+use Illuminate\Support\Facades\Auth;
 
 // test route
 Route::post('print', function(Request $request){
@@ -21,7 +22,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', function () {
         // todo: return groups allowed for this user only
         return Inertia::render('dashboard', [
-            'groups' => Group::all()
+            'groups' => Group::with('users')
+                        ->where('is_ffa', true)
+                        ->orWhereHas('users', function ($q) {
+                            $q->where('users.id', Auth::id());
+                        })
+                        ->get()
         ]);
     })->name('dashboard');
 

@@ -17,7 +17,7 @@ class AdminController extends Controller
 
     public function groups()
     {
-        $groups = Group::all();
+        $groups = Group::with('users')->get();
         $users = User::all();
 
         return Inertia::render('admin/admin-groups', [

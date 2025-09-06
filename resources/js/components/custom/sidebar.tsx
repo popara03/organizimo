@@ -15,7 +15,7 @@ const Sidebar = ({data} : {data: SidebarElement[]}) => {
     <div
     onMouseEnter={() => setIsCollapsed(false)}
     onMouseLeave={() => setIsCollapsed(true)}
-    className={`fixed top-[60px] left-0 max-w-48 ${isCollapsed ? "w-8" : "w-full"} h-[calc(100vh-60px)] bg-primary flex flex-col ease-in-out duration-300 overflow-x-hidden overflow-y-auto`}
+    className={`fixed top-[60px] left-0 max-w-48 ${isCollapsed ? "w-8" : "w-full"} h-[calc(100vh-60px)] bg-primary flex flex-col ease-in-out duration-300 overflow-x-hidden overflow-y-auto z-50`}
     >
       {data.length ?
       data.map((item) => (

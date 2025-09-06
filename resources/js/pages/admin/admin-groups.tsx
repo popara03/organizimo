@@ -36,9 +36,11 @@ import {
 } from "@/components/ui/multi-select"
 
 import { Form, usePage } from '@inertiajs/react'
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, MoreHorizontal } from "lucide-react";
 import InputError from '@/components/input-error'
 import { toast } from 'sonner'
+import { DataTable } from '@/components/custom/admin/DataTable'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 const AdminGroup = () => {
   // color picker
@@ -61,13 +63,98 @@ const AdminGroup = () => {
   const allUsers : any  = usePage().props.users;
   const [selectedUsers, setSelectedUsers] = React.useState<string[]>([]);
 
-  return (
-    <div className='px-4 ps-12'>
-        <h1 className='font-jersey !text-2xl'>Groups</h1>
+  // table
+  const groups : any = usePage().props.groups;
 
-        <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
-            <Input placeholder="Search" className="w-full md:w-50" />
+  const columns = [
+    {
+      accessorKey: "#",
+      header: () => <div className='text-right text-inherit'>#</div>,
+      cell: ({ row }: { row: any }) => {
+        return (
+          <div className='text-right text-inherit'>
+            {row.index + 1}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "name",
+      header: "Name",
+    },
+    {
+      accessorKey: "users",
+      header: () => <div className='text-right text-inherit'>Members</div>,
+      cell : ({row}: { row : any}) => {
+        return (
+          <div className='text-right text-inherit'>
+            {row.original.is_ffa ? 'FFA' : row.original.users.length}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "color",
+      header: "Color",
+      cell: ({row}: { row : any}) => {
+        return (
+          <div className="flex items-center gap-2 text-inherit">
+            <div className="h-6 w-6 rounded-full" style={{ backgroundColor: row.original.color }}></div>
+            {row.original.color}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "created_at",
+      header: "Created At",
+      cell: ({row}: { row : any}) => {
+        return new Date(row.original.created_at).toLocaleDateString();
+      },
+    },
+    {
+      accessorKey: "actions",
+      header: "",
+      cell: ({ row } : {row : any}) => {
+        return (
+        <DropdownMenu>
+          {/* trigger */}
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <MoreHorizontal className="h-4 w-4 *:stroke-secondary" />
+            </Button>
+          </DropdownMenuTrigger>
+
+          {/* list elements */}
+          <DropdownMenuContent align="end" className='bg-secondary *:text-secondary p-0'>
+            <DropdownMenuItem
+            className='p-2 border-b rounded-none border-primary/10 cursor-pointer bg-accent-blue hover:opacity-75'
+            onClick={() => {
+              console.log('edit', row.original.id);
+            }}
+            >
+              Edit
+            </DropdownMenuItem>
             
+            <DropdownMenuItem
+            className='p-2 rounded-none border-b border-primary/10 cursor-pointer bg-accent-red hover:opacity-75'
+            onClick={() => {
+              console.log('delete', row.original.id);
+            }}
+            >
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        )
+      },
+    },
+  ]
+
+  return (
+    <div className='px-4 ps-12 flex flex-col gap-4'>
+        <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
+          <h1 className='font-jersey !text-2xl'>Groups</h1>
             {/* new group popup */}
             <Dialog>
                 <DialogTrigger asChild>
@@ -233,6 +320,12 @@ const AdminGroup = () => {
                 </DialogContent>
             </Dialog>
         </div>
+
+        <DataTable
+          columns={columns}
+          data={groups}
+          searchableColumnIdentifier='name'
+        />
     </div>
   )
 }
