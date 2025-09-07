@@ -46,6 +46,7 @@ export function DataTable<TData, TValue>({columns, data, searchableColumnIdentif
 
     return (
     <div>
+        {/* search input */}
         <div className="flex items-center py-4">
             <Input
             placeholder="Search"

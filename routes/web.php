@@ -40,9 +40,9 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', CheckUserRole::class])->group(function () {
     Route::get('admin', [AdminController::class, 'index'])->name('admin');
 
-    Route::get('admin/groups', [AdminController::class, 'groups'])->name('admin.groups');
+    Route::get('admin/groups', [AdminController::class, 'groups'])->name('admin/groups');
 
-    Route::get('admin/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::get('admin/users', [AdminController::class, 'users'])->name('admin/users');
 });
 
 require __DIR__.'/settings.php';

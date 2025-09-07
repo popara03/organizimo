@@ -42,7 +42,7 @@ class HandleInertiaRequests extends Middleware
             //app name
             'name' => config('app.name'),
             // authenticated user data
-            'user' => $request->user(),
+            'user' => $request->user() ? $request->user()->only('id', 'name', 'role_id', 'position', 'image', 'created_at') : null,
         ];
     }
 }

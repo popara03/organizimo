@@ -17,7 +17,13 @@ Route::middleware('auth')->group(function(){
 });
 
 Route::middleware('auth', CheckUserRole::class)->group(function(){
-    // group management
+    // group
     Route::post('create-group', [GroupController::class, 'store'])
         ->name('create-group');
+
+    Route::put('update-group', [GroupController::class, 'update'])
+        ->name('update-group');
+
+    Route::delete('delete-group/{id}', [GroupController::class, 'destroy'])
+        ->name('delete-group');
 });

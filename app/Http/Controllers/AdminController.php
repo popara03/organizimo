@@ -18,9 +18,11 @@ class AdminController extends Controller
     public function groups()
     {
         $groups = Group::with('users')->get();
-        $users = User::all();
+        $users = User::select('id', 'name', 'image')
+            ->with(['groups:id,name,color'])
+            ->get();
 
-        return Inertia::render('admin/admin-groups', [
+        return Inertia::render('admin/groups', [
             'groups' => $groups,
             'users' => $users
         ]);
@@ -28,7 +30,7 @@ class AdminController extends Controller
 
     public function users()
     {
-        return Inertia::render('admin/admin-users', [
+        return Inertia::render('admin/users', [
             'users' => User::all(),
             'roles' => Role::all()
         ]);

@@ -25,6 +25,8 @@ class User extends Authenticatable
 
     //ono sto se nece vracati u response-u kad se vrati kao JSON/Array, ne vazi u tvom PHP kodu vec samo ako se koristi kao API
     protected $hidden = [
+        'email',
+        'email_verified_at',
         'password',
         'remember_token',
     ];
