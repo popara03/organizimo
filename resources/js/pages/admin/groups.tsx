@@ -123,10 +123,10 @@ const AdminGroup = () => {
           {/* list elements */}
           <DropdownMenuContent
             align="end"
-            className='bg-secondary *:text-secondary p-0'
+            className='bg-secondary *:text-primary p-0'
           >
             {/* edit */}
-            <div onClick={openModalForEdit} className='p-2 border-b rounded-none border-primary/10 bg-accent-blue hover:opacity-75 cursor-pointer text-inherit'>
+            <div onClick={() => openModalForEdit(row.original)} className='p-2 border-b rounded-none border-primary/10 hover:opacity-75 cursor-pointer text-inherit'>
               Edit
             </div>
             
@@ -134,7 +134,7 @@ const AdminGroup = () => {
             <div>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <div className='p-2 rounded-none border-b border-primary/10 bg-accent-red hover:opacity-75 cursor-pointer text-inherit'>Delete</div>
+                  <div className='p-2 rounded-none border-b border-primary/10 hover:opacity-75 cursor-pointer text-inherit'>Delete</div>
                 </AlertDialogTrigger>
                 
                 <AlertDialogContent className='bg-secondary'>
@@ -165,7 +165,7 @@ const AdminGroup = () => {
 
   return (
     <div className='px-4 ps-12 flex flex-col gap-4'>
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
+      <div className="flex flex-col md:flex-row gap-4 md:justify-between items-start md:items-center">
         <h1 className='font-jersey !text-2xl'>Groups</h1>
         <Button onClick={openModalForCreate} className="text-secondary">Create new</Button>
       </div>

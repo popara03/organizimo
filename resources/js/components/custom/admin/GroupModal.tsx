@@ -79,10 +79,10 @@ const GroupModal = ({isOpen, onIsOpenChange, users, groupForEdit, onCreate, onUp
     useEffect(() => {
     if (groupForEdit) {
         setColor(groupForEdit.color);
-        setIsFFA(groupForEdit.is_ffa);
+        setIsFFA(Number(groupForEdit.is_ffa));
         setSelectedUsers(
-        !groupForEdit.is_ffa
-            ? groupForEdit.users.map((u: any) => String(u.id))
+        !Number(groupForEdit.is_ffa)
+            ? groupForEdit.users?.map((u: any) => String(u.id))
             : []
         );
     } else {
@@ -97,8 +97,8 @@ const GroupModal = ({isOpen, onIsOpenChange, users, groupForEdit, onCreate, onUp
         <Dialog
             open={isOpen}
             onOpenChange={()=>{onIsOpenChange(!isOpen)}}
-        >            
-            <DialogContent className="sm:max-w-[500px] p-4 bg-secondary">
+        >
+            <DialogContent className="w-full rounded-2xl sm:max-w-[500px] p-4 bg-secondary">
                 <Form
                 action={groupForEdit ? `/update-group` : '/create-group'}
                 method={groupForEdit ? 'put' : 'post'}
@@ -119,7 +119,7 @@ const GroupModal = ({isOpen, onIsOpenChange, users, groupForEdit, onCreate, onUp
                     return finalData;
                 }}
                 onSuccess={(response:any) => {
-                    toast.success(groupForEdit ? 'Group updated successfully!' : 'Group created successfully!');
+                    toast.success(groupForEdit ? 'Group updated successfully.' : 'Group created successfully.');
                     {groupForEdit ? onUpdate(response.props.group) : onCreate(response.props.group)}
                 }}
                 onError={() => {
@@ -128,10 +128,14 @@ const GroupModal = ({isOpen, onIsOpenChange, users, groupForEdit, onCreate, onUp
                 }
                 resetOnSuccess
                 disableWhileProcessing
+                options={{
+                preserveScroll: true,
+                preserveUrl: true,
+                }}
                 >
                 {({errors, processing}) => (
                     <>
-                    <DialogHeader className='pb-4 border-b border-primary/10'>
+                    <DialogHeader className='items-start pb-4 border-b border-primary/10'>
                         <DialogTitle className='font-bold text-xl'>
                             {groupForEdit ? 'Edit Group' : 'Create New Group'}
                         </DialogTitle>
@@ -236,7 +240,10 @@ const GroupModal = ({isOpen, onIsOpenChange, users, groupForEdit, onCreate, onUp
                             <Label required>Select users</Label>
                             
                             <MultiSelect
-                            onValuesChange={(values) => setSelectedUsers(values)}
+                            onValuesChange={(values) => {
+                                setSelectedUsers(values)
+                                console.log(values)
+                            }}
                             defaultValues={selectedUsers}
                             >
                                 <MultiSelectTrigger className="w-full max-w-[400px]">
@@ -246,7 +253,7 @@ const GroupModal = ({isOpen, onIsOpenChange, users, groupForEdit, onCreate, onUp
                                 <MultiSelectContent className="bg-secondary">
                                 <MultiSelectGroup>
                                     {users.map((user:any) => (
-                                    <MultiSelectItem key={user.id} value={(String(user.id))} className='flex items-center gap-2'>
+                                    <MultiSelectItem key={user.id} value={(String(user.id))} keywords={[user.name]} className='flex items-center gap-2'>
                                         { user.image ?
                                             <img src={'/storage/'+user.image} alt={user.name} className="w-4 h-4 rounded-full" />
                                         :
@@ -265,8 +272,8 @@ const GroupModal = ({isOpen, onIsOpenChange, users, groupForEdit, onCreate, onUp
                         )}
                     </div>
                 
-                    <DialogFooter className='pt-4 border-t border-primary/10'>
-                        <DialogClose asChild>
+                    <DialogFooter className='pt-4 gap-2 border-t border-primary/10'>
+                        <DialogClose asChild className='m-0'>
                             <Button variant="outline">Cancel</Button>
                         </DialogClose>
                         

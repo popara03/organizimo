@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\GroupController;
+use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Middleware\CheckUserRole;
@@ -16,6 +17,7 @@ Route::middleware('auth')->group(function(){
         ->name('change-password');
 });
 
+// Admin dashboard endpoints
 Route::middleware('auth', CheckUserRole::class)->group(function(){
     // group
     Route::post('create-group', [GroupController::class, 'store'])
@@ -26,4 +28,11 @@ Route::middleware('auth', CheckUserRole::class)->group(function(){
 
     Route::delete('delete-group/{id}', [GroupController::class, 'destroy'])
         ->name('delete-group');
+
+    //user
+    Route::put('update-user', [UserController::class, 'update'])
+        ->name('update-user');
+
+    Route::delete('delete-user/{id}', [UserController::class, 'destroy'])
+        ->name('delete-user');
 });

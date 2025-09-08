@@ -32,7 +32,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('dashboard');
 
     Route::get('profile', function(){
-        return Inertia::render('profile');
+        return Inertia::render('settings/profile');
     })->name('profile');
 });
 

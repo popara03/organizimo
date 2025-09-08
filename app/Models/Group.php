@@ -20,6 +20,10 @@ class Group extends Model
         'updated_at',
     ];
 
+    protected $casts = [
+        'is_ffa' => 'boolean',
+    ];
+
    public function users() : BelongsToMany
    {
        return $this->belongsToMany(User::class);
