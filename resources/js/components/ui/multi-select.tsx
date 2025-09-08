@@ -260,7 +260,15 @@ export function MultiSelectContent({
         </Command>
       </div>
       <PopoverContent className="min-w-[var(--radix-popover-trigger-width)] p-0">
-        <Command {...props}>
+        <Command
+        {...props}
+        filter={(value, search, keywords) => {
+          if (keywords?.some(k => k.toLowerCase().includes(search.toLowerCase()))) {
+            return 1
+          }
+          return 0
+        }}
+        >
           {canSearch ? (
             <CommandInput
               placeholder={
@@ -292,7 +300,7 @@ export function MultiSelectItem({
   ...props
 }: {
   badgeLabel?: ReactNode
-  value: string
+  value: string,
 } & Omit<ComponentPropsWithoutRef<typeof CommandItem>, "value">) {
   const { toggleValue, selectedValues, onItemAdded } = useMultiSelectContext()
   const isSelected = selectedValues.has(value)
