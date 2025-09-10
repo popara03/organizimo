@@ -30,7 +30,10 @@ Route::middleware('auth', CheckUserRole::class)->group(function(){
         ->name('delete-group');
 
     //user
-    Route::put('update-user', [UserController::class, 'update'])
+    Route::post('create-user', [UserController::class, 'store'])
+        ->name('create-user');
+
+    Route::post('update-user', [UserController::class, 'update'])
         ->name('update-user');
 
     Route::delete('delete-user/{id}', [UserController::class, 'destroy'])

@@ -3,7 +3,7 @@ import { Head, usePage } from '@inertiajs/react';
 
 export default function Dashboard() {
     const {props} : any = usePage();
-    const user = props.user;
+    const user = props.active_user;
     const groups = props.groups;
 
     return (

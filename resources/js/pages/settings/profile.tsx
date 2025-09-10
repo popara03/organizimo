@@ -8,7 +8,7 @@ import { LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
 
 const Profile = () => {
-    const { user } = usePage().props as any;
+    const user = usePage().props.active_user as any;
 
     const [newImage, setNewImage] = useState<File>();
 

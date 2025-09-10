@@ -2,10 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
-use Tighten\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -42,7 +41,7 @@ class HandleInertiaRequests extends Middleware
             //app name
             'name' => config('app.name'),
             // authenticated user data
-            'user' => $request->user() ? $request->user()->only('id', 'name', 'role_id', 'position', 'image', 'created_at') : null,
+            'active_user' => Auth::user() ? Auth::user() : null,
         ];
     }
 }

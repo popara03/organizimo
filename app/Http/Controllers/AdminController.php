@@ -30,8 +30,14 @@ class AdminController extends Controller
 
     public function users()
     {
+        $users = User::select()
+        ->with('role:id,name')
+        ->orderBy('created_at', 'desc')
+        ->get()
+        ->makeVisible('email');
+
         return Inertia::render('admin/users', [
-            'users' => User::all(),
+            'users' => $users,
             'roles' => Role::all()
         ]);
     }

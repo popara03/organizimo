@@ -13,7 +13,7 @@ import { NotificationContext, NotificationProps } from "@/providers/notification
 
 const Nav = () => {
     const {props} : any = usePage();
-    const user = props.user;
+    const user = props.active_user;
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     
     const handleBurgerClick = () => {

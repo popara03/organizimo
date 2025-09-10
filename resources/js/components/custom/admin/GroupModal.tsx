@@ -98,7 +98,7 @@ const GroupModal = ({isOpen, onIsOpenChange, users, groupForEdit, onCreate, onUp
             open={isOpen}
             onOpenChange={()=>{onIsOpenChange(!isOpen)}}
         >
-            <DialogContent className="w-full rounded-2xl sm:max-w-[500px] p-4 bg-secondary">
+            <DialogContent className="w-full rounded-2xl sm:max-w-[500px] p-4 bg-secondary overflow-y-auto max-h-[90vh]">
                 <Form
                 action={groupForEdit ? `/update-group` : '/create-group'}
                 method={groupForEdit ? 'put' : 'post'}
@@ -123,7 +123,7 @@ const GroupModal = ({isOpen, onIsOpenChange, users, groupForEdit, onCreate, onUp
                     {groupForEdit ? onUpdate(response.props.group) : onCreate(response.props.group)}
                 }}
                 onError={() => {
-                    toast.error('Failed to create group.');
+                    toast.error('Failed to save group.');
                 }
                 }
                 resetOnSuccess
@@ -141,7 +141,7 @@ const GroupModal = ({isOpen, onIsOpenChange, users, groupForEdit, onCreate, onUp
                         </DialogTitle>
 
                         <DialogDescription>
-                            Enter the group details below and click save.
+                            Enter the details below and click save.
                         </DialogDescription>
                     </DialogHeader>
                 

@@ -3,7 +3,7 @@ import AdminLayout from "@/layouts/admin/adminLayout";
 
 const Admin = () => {
   return (
-    <div className="flex-1 px-4 ps-12 flex flex-col">
+    <div className="flex-1 flex flex-col">
       <Head title="Admin Panel" />
 
       <h1 className='font-jersey !text-2xl'>Admin Panel</h1>

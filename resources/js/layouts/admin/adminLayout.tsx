@@ -15,7 +15,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Nav />
             </NotificationProvider>
 
-            <main className="min-h-[calc(100vh-60px)] py-8 flex flex-col">
+            <main className="min-h-[calc(100vh-60px)] py-8 ps-12 pe-4 flex flex-col">
                 <Sidebar data={sidebarAdminTabs} />
                 {children}
             </main>

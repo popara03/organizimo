@@ -43,8 +43,11 @@ class RegisteredUserController extends Controller
                     ->numbers()
                     ->symbols(),
             ],
-            'image' => 'required|array|min:1|max:1', // Dodajemo array pravilo jer se salje niz sa fronta
-            'image.0' => 'image|max:2048', // Validacija prvog (i jedinog) elementa
+            'image' => 'array|min:1|max:1', // Dodajemo array pravilo jer se salje niz sa fronta
+            'image.0' => [
+                'image',
+                'max:2048',
+            ], // Validacija prvog (i jedinog) elementa
             'terms' => 'accepted',
         ]);
 
@@ -52,7 +55,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'image' => $request->file('image')[0]?->store('images', 'public'), //saljemo jedinu sliku u nizu
+            'image' =>  $request->file('image') ? $request->file('image')[0]?->store('images', 'public') : null, //saljemo jedinu sliku u nizu
         ]);
 
         event(new Registered($user));

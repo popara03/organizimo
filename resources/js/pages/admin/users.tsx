@@ -1,64 +1,64 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { usePage } from '@inertiajs/react'
-
-import AdminLayout from '@/layouts/admin/adminLayout'
 
 import axios from 'axios'
 import { toast } from 'sonner'
 
-import GroupModal from '@/components/custom/admin/GroupModal'
-import {Button} from '@/components/ui/button'
+import AdminLayout from '@/layouts/admin/adminLayout'
 
+import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/custom/admin/DataTable'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { MoreHorizontal } from 'lucide-react'
+import { MoreHorizontal, Clipboard } from 'lucide-react'
+import GroupModal from '@/components/custom/admin/UserModal'
 
-const Groups = () => {
+const Users = () => {
   // data
   const globalProps = usePage().props;
-  const [groups, setGroups] = useState<any[]>(globalProps.groups as any[]);
   const [users, setUsers] = useState<any[]>(globalProps.users as any[]);
+  const [roles, setRoles] = useState<any[]>(globalProps.roles as any[]);
 
   // modal open
   const [isOpen, setIsOpen] = useState(false);
-  
+
   const openModalForCreate = () => {
-    setGroupForEdit(null);
+    setUserForEdit(null);
     setIsOpen(true);
   };
 
-  const openModalForEdit = (group: any) => {
-    setGroupForEdit(group);
+  const openModalForEdit = (user: any) => {
+    console.log(userForEdit)
+    setUserForEdit(user);
     setIsOpen(true);
   };
 
   // edit
-  const [groupForEdit, setGroupForEdit] = useState<any>(null);
+  const [userForEdit, setUserForEdit] = useState<any>(null);
 
   // delete
   const handleDelete = async (id:number) => {
-    const r = await axios.delete(`/delete-group/${id}`);
-    
-    if(r.status === 200){
-      setGroups(groups.filter((group: any) => group.id !== id));
+    const r = await axios.delete(`/delete-user/${id}`);
 
-      toast.success('Group deleted successfully.');
+    if(r.status === 200){
+      setUsers(users.filter((user: any) => user.id !== id));
+
+      toast.success('User deleted successfully.');
     }
     else {
-      toast.error('Failed to delete group. ' + r.data.message);
+      toast.error('Failed to delete user. ' + r.data.message);
     }
   }
 
   // table update handles
-  const updateTableOnCreate = (group: any) => {
-    setGroups([...groups, group]);
+  const updateTableOnCreate = (user: any) => {
+    setUsers([...users, user]);
   };
 
-  const updateTableOnEdit = (group: any) => {
-    setGroups(groups.map((g) => (g.id === group.id ? group : g)));
+  const updateTableOnEdit = (user: any) => {
+    setUsers(users.map((u) => (u.id === user.id ? user : u)));
   };
-  
+
   // table columns
   const columns = [
     {
@@ -75,33 +75,59 @@ const Groups = () => {
     {
       accessorKey: "name",
       header: "Name",
-    },
-    {
-      accessorKey: "users",
-      header: () => <div className='text-right text-inherit'>Members</div>,
-      cell : ({row}: { row : any}) => {
+      cell: ({ row }: { row: any }) => {
         return (
-          <div className='text-right text-inherit'>
-            {row.original.is_ffa ? 'FFA' : row.original.users.length}
+          <div className='flex flex-wrap gap-2 text-left text-inherit'>
+            { row.original.image ?
+                <img src={'/storage/'+row.original.image} alt={row.original.name} className="w-4 h-4 rounded-full" />
+            :
+                <img src="/icons/user.svg" alt={row.original.name} className="w-4 h-4 rounded-full bg-accent-lime"/>
+            }
+
+            {row.original.name}
           </div>
         );
       },
     },
     {
-      accessorKey: "color",
-      header: "Color",
+      accessorKey: "email",
+      header: "Email",
+      cell: ({row} : {row : any}) => {
+        return (
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <a href={`mailto:${row.original.email}`} className='text-blue-500'>{(row.original.email)}</a>
+            
+            <Button
+            className='!p-2 bg-secondary/10'
+            onClick={()=>{
+              navigator.clipboard.writeText(row.original.email);
+              toast.success('Email copied to clipboard');
+            }}>
+              <Clipboard className='w-4 h-4 stroke-secondary'/>
+            </Button>
+          </div>
+        )
+      }
+    },
+    {
+      accessorKey: "role",
+      header: "Role",
+      cell: ({row} : {row : any}) => <span className='text-inherit'>{(row.original.role.name)}</span>
+    },
+    {
+      accessorKey: "position",
+      header: "Position",
       cell: ({row}: { row : any}) => {
         return (
-          <div className="flex items-center gap-2 text-inherit">
-            <div className="h-6 w-6 rounded-full" style={{ backgroundColor: row.original.color }}></div>
-            {row.original.color}
+          <div className='text-inherit'>
+            {row.original.position ? row.original.position : '-'}
           </div>
         );
       },
     },
     {
       accessorKey: "created_at",
-      header: "Created At",
+      header: "Joined",
       cell: ({row}: { row : any}) => {
         return new Date(row.original.created_at).toLocaleDateString();
       },
@@ -165,28 +191,30 @@ const Groups = () => {
   return (
     <>
       <div className="flex flex-col md:flex-row gap-4 md:justify-between items-start md:items-center">
-        <h1 className='font-jersey !text-2xl'>Groups</h1>
+        <h1 className='font-jersey !text-2xl'>Users</h1>
         <Button onClick={openModalForCreate} className="text-secondary">Create new</Button>
       </div>
 
       <GroupModal
       isOpen={isOpen}
       onIsOpenChange={setIsOpen}
-      users={users}
-      groupForEdit={groupForEdit}
+      roles={roles}
+      userForEdit={userForEdit}
       onCreate={updateTableOnCreate}
       onUpdate={updateTableOnEdit}
       />
 
       <DataTable
       columns={columns}
-      data={groups}
+      data={users}
       searchableColumnIdentifier='name'
       />
+    
     </>
   )
 }
 
-Groups.layout = (page: React.ReactNode) => <AdminLayout>{page}</AdminLayout>;
+Users.layout = (page: React.ReactNode) => <AdminLayout>{page}</AdminLayout>;
 
-export default Groups
+
+export default Users
