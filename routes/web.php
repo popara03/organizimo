@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\CheckUserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,17 +20,7 @@ Route::get('/', function () {
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('dashboard', function () {
-        // todo: return groups allowed for this user only
-        return Inertia::render('dashboard', [
-            'groups' => Group::with('users')
-                        ->where('is_ffa', true)
-                        ->orWhereHas('users', function ($q) {
-                            $q->where('users.id', Auth::id());
-                        })
-                        ->get()
-        ]);
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('profile', function(){
         return Inertia::render('settings/profile');

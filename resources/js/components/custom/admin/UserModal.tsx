@@ -1,4 +1,4 @@
-import { Form } from '@inertiajs/react'
+import { Form, useForm } from '@inertiajs/react'
 import {Label} from '@/components/ui/label'
 import {Input} from '@/components/ui/input'
 import InputError from '@/components/input-error'
@@ -32,6 +32,7 @@ type GroupModalProps = {
 const GroupModal = ({isOpen, onIsOpenChange, roles, userForEdit, onCreate, onUpdate}: GroupModalProps) => {
     // File upload
     const [files, setFiles] = useState<File[]>([]);
+
     useEffect(() => {
         // If editing and user has an image, load it as a File object
         const loadFileFromPath = async (path: string) => {
@@ -175,7 +176,10 @@ const GroupModal = ({isOpen, onIsOpenChange, roles, userForEdit, onCreate, onUpd
                         </div>
 
                         {/* image */}
-                        <FileUploader files={files} setFiles={setFiles} />
+                        <FileUploader
+                            files={files}
+                            setFiles={setFiles}
+                        />
                     </div>
                 
                     <DialogFooter className='pt-4 gap-2 border-t border-primary/10'>

@@ -33,7 +33,7 @@ Route::middleware('auth', CheckUserRole::class)->group(function(){
     Route::post('create-user', [UserController::class, 'store'])
         ->name('create-user');
 
-    Route::post('update-user', [UserController::class, 'update'])
+    Route::post('update-user', [UserController::class, 'update'])   //post, inertia serialization issue w put
         ->name('update-user');
 
     Route::delete('delete-user/{id}', [UserController::class, 'destroy'])

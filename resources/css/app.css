@@ -1,3 +1,5 @@
+
+
 /* fonts */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Jersey+20&display=swap');
@@ -18,7 +20,7 @@
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
-@theme{
+@theme {
   --color-primary: #1E1E1E;
   --color-secondary: #EEEEEE;
   --color-tertiary: #DADADA;

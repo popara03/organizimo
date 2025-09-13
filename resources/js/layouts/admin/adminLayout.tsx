@@ -1,7 +1,7 @@
 import React from 'react';
-import Nav from '@/components/custom/nav';
+import Nav from '@/components/custom/fixed/nav';
 import NotificationProvider from '@/providers/notificationProvider';
-import Sidebar, { SidebarElement } from '@/components/custom/sidebar';
+import Sidebar, { SidebarElement } from '@/components/custom/fixed/sidebar';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const sidebarAdminTabs: SidebarElement[] = [

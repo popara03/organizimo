@@ -7,8 +7,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Button } from "../ui/button";
-import Notification from "./notification";
+import { Button } from "@/components/ui/button";
+import Notification from "@/components/custom/notification";
 import { NotificationContext, NotificationProps } from "@/providers/notificationProvider";
 
 const Nav = () => {

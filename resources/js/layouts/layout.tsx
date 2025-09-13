@@ -1,5 +1,5 @@
 import React from 'react';
-import Nav from '../components/custom/nav';
+import Nav from '../components/custom/fixed/nav';
 import NotificationProvider from '@/providers/notificationProvider';
 
 export default function Layout({ children }: { children: React.ReactNode }) {

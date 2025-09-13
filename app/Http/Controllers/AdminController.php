@@ -32,7 +32,6 @@ class AdminController extends Controller
     {
         $users = User::select()
         ->with('role:id,name')
-        ->orderBy('created_at', 'desc')
         ->get()
         ->makeVisible('email');
 

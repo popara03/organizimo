@@ -45,17 +45,24 @@ export function MultiSelect({
   values,
   defaultValues,
   onValuesChange,
+  resetSignal, //tells the component to reset selected values
 }: {
   children: ReactNode
   values?: string[]
   defaultValues?: string[]
-  onValuesChange?: (values: string[]) => void
+  onValuesChange?: (values: string[]) => void,
+  resetSignal? : boolean
 }) {
   const [open, setOpen] = useState(false)
   const [selectedValues, setSelectedValues] = useState(
     new Set<string>(values ?? defaultValues),
   )
   const [items, setItems] = useState<Map<string, ReactNode>>(new Map())
+
+  // reset selected values when resetSignal changes
+  useEffect(() => {
+      setSelectedValues(new Set())
+  }, [resetSignal])
 
   function toggleValue(value: string) {
     const getNewSet = (prev: Set<string>) => {
