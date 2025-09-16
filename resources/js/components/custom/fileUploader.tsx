@@ -18,9 +18,16 @@ interface FileUploadProps {
     setFiles: (files: File[]) => void,
     maxFiles?: number,
     maxFileSize?: number,
+    allowMultiple?: boolean,
+    allowDocuments?: boolean,
 }
 
-const FileUploader = ({files, setFiles, maxFiles = 1, maxFileSize = 2 * 1024 * 1024} : FileUploadProps) => {
+const FileUploader = ({files, setFiles, maxFiles = 1, maxFileSize = 2 * 1024 * 1024, allowMultiple = false, allowDocuments = true} : FileUploadProps) => {
+    // allowed file types
+    const allowedFileTypes = ['.jpg', '.jpeg', '.png', '.webp'];
+    if (allowDocuments) {
+        allowedFileTypes.push('.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt', '.json', '.csv', '.zip', '.rar');
+    }
 
     const onFileValidate = useCallback(
         (file: File): string | null => {
@@ -29,9 +36,10 @@ const FileUploader = ({files, setFiles, maxFiles = 1, maxFileSize = 2 * 1024 * 1
                 return "This file is already uploaded.";
             }
 
-            // Validate file type (only images)
-            if (!file.type.startsWith("image/")) {
-                return "Only image files are allowed.";
+            // Validate file type
+            const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+            if(!allowedFileTypes.includes(fileExtension)) {
+                return `Invalid file type: ${fileExtension}. Only following types are allowed: ${allowedFileTypes.join(", ")}.`;
             }
 
             // Validate max files
@@ -56,11 +64,13 @@ const FileUploader = ({files, setFiles, maxFiles = 1, maxFileSize = 2 * 1024 * 1
     };
     return (
         <FileUpload
-        name='image'
-        accept="image/*"
-        maxFiles={maxFiles}
         value={files}
         onValueChange={setFiles}
+        name='image'
+        accept={allowedFileTypes.join(',')}
+        multiple={allowMultiple}
+        maxFiles={maxFiles}
+        maxSize={maxFileSize}
         onFileValidate={onFileValidate}
         onFileReject={onFileReject}
         className="w-full"

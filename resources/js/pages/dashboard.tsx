@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import Sidebar from '@/components/custom/fixed/sidebar';
 import { Button } from '@/components/ui/button';
@@ -34,111 +34,18 @@ import {
 import axios from 'axios';
 
 import Post from '@/components/custom/post/post';
-import PostPreviewModal from '@/components/custom/post/postPreviewModal';
+import PostsProvider, { PostsContext } from '@/providers/postsProvider';
+import PostCreateModal from '@/components/custom/post/postCreateModal';
 
-export default function Dashboard() {
-    // data
+function DashboardContent() {
+    // context
+    const ctx = useContext(PostsContext);
+    const { posts, setPosts, openModal, setOpenModal, postForEdit, setPostForEdit, createPost, updatePost } = ctx;
+
+    // other data
     const {props} : any = usePage();
     const groups = props.groups;
     const users = props.users;
-
-    // dummy data for testing post
-    const dummyPosts = [
-        {
-            id: 1,
-            title: "Lorem ipsum dolor sit amet consectetur adipisicing elit 1",
-            content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod. Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-            files: [
-                { id: 3, name: "presentation.pdf", url: "documents/presentation.pdf", type: "document" },
-                { id: 4, name: "instructions.pdf", url: "documents/instructions.pdf", type: "document" },
-            ],
-            status: true,
-            createdAt: "2025-09-05 20:54:12",
-            group: {
-                id: 1,
-                name: "Group 1",
-                color: "lime",
-            },
-            author: {
-                id: 1,
-                name: "Author 1",
-                image: null,
-            },
-            comments: [],
-        },
-        {
-            id: 2,
-            title: "Lorem ipsum dolor sit amet consectetur adipisicing elit 2",
-            content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod. Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-            files: [
-                { id: 1, name: "image1.jpg", url: "images/ZczmmKp4GBTxgc47Dl0kTYA9JHsLTKnJY2iOEIUL.jpg", type: "image" },
-                { id: 2, name: "cv.pdf", url: "documents/cv.pdf", type: "document" },
-                { id: 3, name: "cv.pdf", url: "documents/cv.pdf", type: "document" },
-            ],
-            status: true,
-            createdAt: "2025-09-05 20:54:12",
-            group: {
-                id: 2,
-                name: "Group 2",
-                color: "red",
-            },
-            author: {
-                id: 2,
-                name: "Author 2",
-                image: null,
-            },
-            comments: [],
-        },
-        {
-            id: 4,
-            title: "Lorem ipsum dolor sit amet consectetur adipisicing elit 2",
-            content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod. Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-            files: [
-                { id: 1, name: "image1.jpg", url: "images/ZczmmKp4GBTxgc47Dl0kTYA9JHsLTKnJY2iOEIUL.jpg", type: "image" },
-                { id: 2, name: "image2.png", url: "images/ZczmmKp4GBTxgc47Dl0kTYA9JHsLTKnJY2iOEIUL.jpg", type: "image" },
-                { id: 3, name: "cv.pdf", url: "documents/cv.pdf", type: "document" },
-                { id: 4, name: "cv.pdf", url: "documents/cv.pdf", type: "document" },
-            ],
-            status: true,
-            createdAt: "2025-09-05 20:54:12",
-            group: {
-                id: 2,
-                name: "Group 2",
-                color: "red",
-            },
-            author: {
-                id: 2,
-                name: "Author 2",
-                image: null,
-            },
-            comments: [],
-        },
-        {
-            id: 3,
-            title: "Lorem ipsum dolor sit amet consectetur adipisicing elit 2",
-            content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod. Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-            files: [
-                { id: 1, name: "image1.jpg", url: "images/ZczmmKp4GBTxgc47Dl0kTYA9JHsLTKnJY2iOEIUL.jpg", type: "image" },
-                { id: 2, name: "image2.png", url: "images/ZczmmKp4GBTxgc47Dl0kTYA9JHsLTKnJY2iOEIUL.jpg", type: "image" },
-                { id: 3, name: "cv.pdf", url: "documents/cv.pdf", type: "document" },
-                { id: 4, name: "cv.pdf", url: "documents/cv.pdf", type: "document" },
-            ],
-            status: true,
-            createdAt: "2025-09-05 20:54:12",
-            group: {
-                id: 2,
-                name: "Group 2",
-                color: "red",
-            },
-            author: {
-                id: 2,
-                name: "Author 2",
-                image: null,
-            },
-            comments: [],
-        },
-    ];
-    const [posts, setPosts] = useState<any[]>(dummyPosts);
 
     // filters
     const [activeGroup, setActiveGroup] = useState<number | null>(null);
@@ -204,81 +111,6 @@ export default function Dashboard() {
         setStatus(null);
         setSelectedUsers([]);
         setResetSignal(!resetSignal);   //trigger reset signal for multi-select
-    }
-
-    // post change handlers
-    const handlePostSaved = (postId: number, isSaved: boolean) => {
-        // axios call here
-
-        setPosts(() =>
-            posts.map((post) =>
-                post.id === postId ? { ...post, isSaved } : post
-            )
-        );
-    }
-
-    const handlePostFollowing = (postId: number, isFollowing: boolean) => {
-        // axios call here
-        
-        setPosts(() =>
-            posts.map((post) =>
-                post.id === postId ? { ...post, isFollowing } : post
-            )
-        );
-    }
-
-    const handlePostStatusChange = (postId: number, status: string) => {
-        const isActive = status === "1" ? true : false;
-
-        return;
-
-        // axios call here
-        axios.post(`/update-post-status/${postId}`, { status: isActive })
-        .then(response => {
-                console.log('Post status updated successfully:', response.data);
-                
-                setPosts(() =>
-                    posts.map((post) =>
-                        post.id === postId ? { ...post, status: isActive } : post
-                    )
-                );
-            })
-            .catch(error => {
-                console.error('Error updating post status:', error);
-            }
-        );
-    }
-
-    const handlePostDelete = async (id:number) => {
-        console.log("Delete post with id:", id);
-        return;
-
-        const r = await axios.delete(`/delete-post/${id}`);
-        
-        if(r.status === 200){
-            setPosts(posts.filter((post: any) => post.id !== id));
-        }
-        else {
-            console.error('Failed to delete post. ' + r.data.message);
-        }
-    }
-
-    // post preview toggler
-    const [isPreviewOpen, setIsPreviewOpen] = useState<boolean>(false);
-    const [postForPreview, setPostForPreview] = useState<any>(null);
-    
-    const openPreview = (post:any) => {
-        setPostForPreview(post);
-        setIsPreviewOpen(!isPreviewOpen);
-    }
-
-    // post edit modal
-    const [openModal, setOpenModal] = useState<boolean>(false);
-    const [postForEdit, setPostForEdit] = useState<any>(null);
-
-    const openModalForEdit = (post:any) => {
-        setPostForEdit(post);
-        setOpenModal(true);
     }
 
     return (
@@ -484,24 +316,40 @@ export default function Dashboard() {
                 <Post 
                 key={post.id} 
                 post={post} 
-                onSave={handlePostSaved} 
-                onFollow={handlePostFollowing} 
-                onDelete={handlePostDelete}
-                onStatusChange={handlePostStatusChange}
-                togglePreview={openPreview}
-                openModalForEdit={openModalForEdit}
                 />
             )) : (
                 <p className='text-secondary text-base'>No posts found.</p>
             )}
         </div>
 
-        {/* Post Preview Modal */}
-        <PostPreviewModal 
-        isOpen={isPreviewOpen} 
-        togglePreview={openPreview} 
-        post={postForPreview}
+        {/* create/edit modal */}
+        <PostCreateModal
+        isOpen={openModal}
+        onIsOpenChange={() => setOpenModal(!openModal)}
+        groups={groups}
+        activeGroupId={activeGroup}
+        postForEdit={postForEdit}
+        onCreate={createPost}
+        onUpdate={updatePost}
         />
+
+        {/* create post button */}
+        <Button
+        className="z-10 fixed bottom-4 right-4 size-16 rounded-full bg-accent-blue flex justify-center items-center"
+        onClick={ctx.openModalForCreate}
+        >
+            <svg className='size-6' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M23 11V13H22V14H14V22H13V23H11V22H10V14H2V13H1V11H2V10H10V2H11V1H13V2H14V10H22V11H23Z" fill="white"/>
+            </svg>
+        </Button>
     </div>
     );
+}
+
+export default function Dashboard() {
+  return (
+    <PostsProvider>
+      <DashboardContent />
+    </PostsProvider>
+  );
 }
