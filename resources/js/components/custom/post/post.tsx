@@ -57,10 +57,10 @@ type PostDTO = {
     }>;
 }
 
-const Post = ({ post, isPreviewed, className }: { post: PostDTO, isPreviewed?: boolean, className?: string }) => {
+const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDTO, isPreviewed?: boolean, openModalForEdit: (post: PostDTO) => void, className?: string }) => {
     // context
     const ctx = useContext(PostsContext);
-    const { savePost, followPost, changeStatus, deletePost, openModalForEdit } = ctx;
+    const { savePost, followPost, changeStatus, deletePost } = ctx;
 
     // active user
     const {props} : any = usePage();

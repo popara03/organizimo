@@ -39,8 +39,21 @@ import PostCreateModal from '@/components/custom/post/postCreateModal';
 
 function DashboardContent() {
     // context
-    const ctx = useContext(PostsContext);
-    const { posts, setPosts, openModal, setOpenModal, postForEdit, setPostForEdit, createPost, updatePost } = ctx;
+    const { posts, setPosts } = useContext(PostsContext);
+
+    // post create/edit modal
+    const [openModal, setOpenModal] = useState<boolean>(false);
+    const [postForEdit, setPostForEdit] = useState<any>(null);
+
+    const openModalForCreate = () => {
+        setPostForEdit(null);
+        setOpenModal(true);
+    }
+
+    const openModalForEdit = (post:any) => {
+        setPostForEdit(post);
+        setOpenModal(true);
+    };
 
     // other data
     const {props} : any = usePage();
@@ -48,7 +61,7 @@ function DashboardContent() {
     const users = props.users;
 
     // filters
-    const [activeGroup, setActiveGroup] = useState<number | null>(null);
+    const [activeGroupId, setActiveGroup] = useState<number | null>(null);
     
     const [personalization, setPersonalization] = useState<"my-posts" | "saved" | "following" | null>(null);
     
@@ -66,7 +79,7 @@ function DashboardContent() {
 
     // filter data object
     const [filterData, setFilterData] = useState<any>({
-        group: activeGroup,
+        group: activeGroupId,
         personalization,
         keyword,
         startDate,
@@ -76,7 +89,7 @@ function DashboardContent() {
     });
     useEffect(() => {
         const newFilterData = {
-            group: activeGroup,
+            group: activeGroupId,
             personalization,
             keyword,
             startDate,
@@ -85,7 +98,7 @@ function DashboardContent() {
             selectedUsers,
         };
         handleFiltering(newFilterData);
-    }, [activeGroup, personalization, keyword, startDate, endDate, status, selectedUsers]);
+    }, [activeGroupId, personalization, keyword, startDate, endDate, status, selectedUsers]);
 
     const handleFiltering = (filterData:any) => {
         console.log(filterData)
@@ -117,7 +130,7 @@ function DashboardContent() {
     <div className="flex-1 px-4 ps-12 flex flex-col">
         <Head title="Dashboard" />
 
-        <Sidebar data={groups} groupState={activeGroup} setGroupState={setActiveGroup} />
+        <Sidebar data={groups} groupState={activeGroupId} setGroupState={setActiveGroup} />
 
         {/* filters */}
         <div className="w-full pb-8 flex flex-col items-center gap-8 border-b border-primary/10">
@@ -306,7 +319,7 @@ function DashboardContent() {
             {/* selected group */}
             <div className="w-full flex items-center md:justify-center gap-2">
                 <Label>Selected group: </Label>
-                <span className='font-bold'>{activeGroup ? groups.find((g:any) => g.id == activeGroup)?.name : 'None'}</span>
+                <span className='font-bold'>{activeGroupId ? groups.find((g:any) => g.id == activeGroupId)?.name : 'None'}</span>
             </div>
         </div>
 
@@ -316,6 +329,7 @@ function DashboardContent() {
                 <Post 
                 key={post.id} 
                 post={post} 
+                openModalForEdit={openModalForEdit}
                 />
             )) : (
                 <p className='text-secondary text-base'>No posts found.</p>
@@ -324,19 +338,17 @@ function DashboardContent() {
 
         {/* create/edit modal */}
         <PostCreateModal
-        isOpen={openModal}
-        onIsOpenChange={() => setOpenModal(!openModal)}
-        groups={groups}
-        activeGroupId={activeGroup}
-        postForEdit={postForEdit}
-        onCreate={createPost}
-        onUpdate={updatePost}
+            isOpen={openModal}
+            onOpenChange={(open: boolean) => { setOpenModal(open); }}
+            postForEdit={postForEdit}
+            groups={groups}
+            activeGroupId={activeGroupId}
         />
 
         {/* create post button */}
         <Button
         className="z-10 fixed bottom-4 right-4 size-16 rounded-full bg-accent-blue flex justify-center items-center"
-        onClick={ctx.openModalForCreate}
+        onClick={openModalForCreate}
         >
             <svg className='size-6' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M23 11V13H22V14H14V22H13V23H11V22H10V14H2V13H1V11H2V10H10V2H11V1H13V2H14V10H22V11H23Z" fill="white"/>

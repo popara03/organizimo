@@ -1,5 +1,6 @@
 import axios from 'axios';
-import React, { createContext, useState } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
+import { flushSync } from 'react-dom';
 
 export const PostsContext = createContext<any>(null);
 
@@ -50,8 +51,8 @@ const PostsProvider = ({ children } : { children: React.ReactNode }) => {
             title: "Lorem ipsum dolor sit amet consectetur adipisicing elit 1. Lorem ipsum dolor sit amet consectetur adipisicing elit 1. Lorem ipsum dolor sit amet consectetur adipisicing elit 1.",
             content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod. Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.",
             files: [
-                { id: 3, name: "presentation.pdf", url: "documents/presentation.pdf", type: "document" },
-                { id: 4, name: "instructions.pdf", url: "documents/instructions.pdf", type: "document" },
+                { id: 3, name: "presentation.txt", url: "documents/presentation.txt", type: "document" },
+                { id: 4, name: "instructions.txt", url: "documents/instructions.txt", type: "document" },
             ],
             status: true,
             createdAt: "2025-09-05 20:54:12",
@@ -187,19 +188,12 @@ const PostsProvider = ({ children } : { children: React.ReactNode }) => {
         }
     }
 
-    // post create/edit modal
-    const [openModal, setOpenModal] = useState<boolean>(false);
-    const [postForEdit, setPostForEdit] = useState<any>(null);
-
-    const openModalForCreate = () => {
-        console.log("Open modal for create");
-        setPostForEdit(null);
-        setOpenModal(true);
+    const updatePostsOnCreate = (post: any) => {
+        setPosts([...posts, post]);
     }
 
-    const openModalForEdit = (post:any) => {
-        setPostForEdit(post);
-        setOpenModal(true);
+    const updatePostsOnEdit = (updatedPost: any) => {
+        setPosts(posts.map((post) => post.id === updatedPost.id ? updatedPost : post));
     }
 
     return (
@@ -209,10 +203,8 @@ const PostsProvider = ({ children } : { children: React.ReactNode }) => {
             followPost,
             changeStatus,
             deletePost,
-            openModal,
-            setOpenModal,
-            openModalForCreate,
-            openModalForEdit
+            updatePostsOnCreate,
+            updatePostsOnEdit,
         }}>
         {children}
         </PostsContext.Provider>

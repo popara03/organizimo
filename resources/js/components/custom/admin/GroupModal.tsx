@@ -77,6 +77,7 @@ const GroupModal = ({isOpen, onIsOpenChange, users, groupForEdit, onCreate, onUp
 
     // onload reset modal depending on action (edit/create)
     useEffect(() => {
+        console.log('groupForEdit changed:', groupForEdit);
     if (groupForEdit) {
         setColor(groupForEdit.color);
         setIsFFA(Number(groupForEdit.is_ffa));
@@ -240,11 +241,8 @@ const GroupModal = ({isOpen, onIsOpenChange, users, groupForEdit, onCreate, onUp
                             <Label required>Select users</Label>
                             
                             <MultiSelect
-                            onValuesChange={(values) => {
-                                setSelectedUsers(values)
-                                console.log(values)
-                            }}
-                            defaultValues={selectedUsers}
+                            onValuesChange={setSelectedUsers}
+                            values={selectedUsers}
                             >
                                 <MultiSelectTrigger className="w-full max-w-[400px]">
                                 <MultiSelectValue placeholder="Select users" />

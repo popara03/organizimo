@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/popover"
 import {
   createContext,
+  use,
   useCallback,
   useContext,
   useEffect,
@@ -61,7 +62,9 @@ export function MultiSelect({
 
   // reset selected values when resetSignal changes
   useEffect(() => {
-      setSelectedValues(new Set())
+    if (resetSignal) {
+      setSelectedValues(new Set());
+    }
   }, [resetSignal])
 
   function toggleValue(value: string) {
@@ -74,6 +77,7 @@ export function MultiSelect({
       }
       return newSet
     }
+
     setSelectedValues(getNewSet)
     onValuesChange?.([...getNewSet(selectedValues)])
   }

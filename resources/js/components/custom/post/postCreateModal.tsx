@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import {
   Dialog,
@@ -29,55 +29,70 @@ import { Button } from '@/components/ui/button'
 import { LoaderCircle } from "lucide-react";
 import { toast } from 'sonner';
 
+import { PostsContext } from '@/providers/postsProvider';
+
 type PostModalProps = {
     isOpen: boolean,
-    onIsOpenChange: (open: boolean) => void,
-    postForEdit: any,
+    onOpenChange: (open: boolean) => void,
+    postForEdit?: any,
     groups: any[],
-    activeGroupId?: number | null,
-    onCreate: (group: any) => void,
-    onUpdate: (group: any) => void
+    activeGroupId: number | null,
 }
 
-const PostCreateModal = ({isOpen, onIsOpenChange, postForEdit, groups, activeGroupId, onCreate, onUpdate}: PostModalProps) => {
-    // Content
-    const [content, setContent] = useState<string>(postForEdit?.content || 'KURAC');
-
-    // group
+const PostCreateModal = ({isOpen, onOpenChange, postForEdit, groups, activeGroupId}: PostModalProps) => {
     const [group, setGroup] = useState<any>(null);
-    if(activeGroupId && !group){
-        setGroup(activeGroupId);
-    }
-    
-    // File upload
     const [files, setFiles] = useState<File[]>([]);
+    const {updatePostsOnEdit, updatePostsOnCreate} = useContext(PostsContext);
 
     // onload reset modal depending on action (edit/create)
     useEffect(() => {
-        if(postForEdit){
+        if (postForEdit) {
             setGroup(postForEdit.group.id);
-            postForEdit.files?.forEach((f:any) => {
-                setFiles((prev) => [...prev, f]);
-            });
-        }
-        else{
+
+            // If editing and post has images or files, load it as a File objects array
+            const loadFileFromPath = async (file: any) => {
+                try {
+                    const response = await fetch(`/storage/${file.url}`);
+                    const blob = await response.blob();
+                    const newFile = new File([blob], file.name || "attachment.jpg", { type: blob.type });
+                    setFiles((prev) => [...prev, newFile]);
+                } catch (error) {
+                    console.error("Failed to load file from path:", error);
+                }
+            };
+
+            if (postForEdit?.files && postForEdit.files.length > 0) {
+                postForEdit.files.forEach((f:any) => {
+                    loadFileFromPath(f);
+                });
+            } else {
+                setFiles([]);
+            }
+        } else {
             setGroup(activeGroupId || null);
             setFiles([]);
         }
-    }, [postForEdit, isOpen]);
+    }, [isOpen]);
 
     return (
         <Dialog
             open={isOpen}
-            onOpenChange={()=>{onIsOpenChange(!isOpen)}}
+            onOpenChange={()=>{onOpenChange(!isOpen)}}
         >
             <DialogContent className="w-full rounded-2xl sm:max-w-[800px] p-4 bg-secondary overflow-y-auto scrollbar max-h-[90vh]">
                 <Form
                 action={postForEdit ? `/update-post` : '/create-post'}
                 method={postForEdit ? 'put' : 'post'}
+                transform={(data) => {
+                    const finalData = {
+                        ...data,
+                        files: files
+                    }
+                    return finalData;
+                }}
                 onSuccess={(response:any) => {
                     toast.success(postForEdit ? 'Post updated successfully.' : 'Post created successfully.');
-                    {postForEdit ? onUpdate(response.props.post) : onCreate(response.props.post)}
+                    {postForEdit ? updatePostsOnEdit(response.props.post) : updatePostsOnCreate(response.props.post)}
                 }}
                 onError={() => {
                     toast.error('Failed to save post.');
@@ -86,8 +101,8 @@ const PostCreateModal = ({isOpen, onIsOpenChange, postForEdit, groups, activeGro
                 resetOnSuccess
                 disableWhileProcessing
                 options={{
-                preserveScroll: true,
-                preserveUrl: true,
+                    preserveScroll: true,
+                    preserveUrl: true,
                 }}
                 >
                 {({errors, processing}) => {
@@ -129,8 +144,7 @@ const PostCreateModal = ({isOpen, onIsOpenChange, postForEdit, groups, activeGro
                                                     name="content"
                                                     placeholder='Post content'
                                                     required
-                                                    value={content}
-                                                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
+                                                    defaultValue={postForEdit?.content ? postForEdit?.content : ''}
                                                     className='w-full min-h-[200px] p-4 !bg-secondary text-primary border border-primary/10 focus:border-primary rounded-md overflow-y-auto scrollbar'
                                                 />
 

@@ -90,8 +90,8 @@ const FileUploader = ({files, setFiles, maxFiles = 1, maxFileSize = 2 * 1024 * 1
 
             {/* uploaded files */}
             <FileUploadList>
-                {files.map((file) => (
-                <FileUploadItem key={file.name} value={file}>
+                {files.map((file, index) => (
+                <FileUploadItem key={index} value={file}>
                     <FileUploadItemPreview />
                     <FileUploadItemMetadata className='w-2' />
                     <FileUploadItemDelete onClick={() => handleFileRemove(file)} asChild>
