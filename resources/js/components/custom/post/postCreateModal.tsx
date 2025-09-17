@@ -52,7 +52,7 @@ const PostCreateModal = ({isOpen, onOpenChange, postForEdit, groups, activeGroup
             // If editing and post has images or files, load it as a File objects array
             const loadFileFromPath = async (file: any) => {
                 try {
-                    const response = await fetch(`/storage/${file.url}`);
+                    const response = await fetch(`/storage/${file.path}`);
                     const blob = await response.blob();
                     const newFile = new File([blob], file.name || "attachment.jpg", { type: blob.type });
                     setFiles((prev) => [...prev, newFile]);
@@ -86,18 +86,19 @@ const PostCreateModal = ({isOpen, onOpenChange, postForEdit, groups, activeGroup
                 transform={(data) => {
                     const finalData = {
                         ...data,
+                        group: group,
                         files: files
                     }
                     return finalData;
                 }}
                 onSuccess={(response:any) => {
+                    console.log(response);
                     toast.success(postForEdit ? 'Post updated successfully.' : 'Post created successfully.');
-                    {postForEdit ? updatePostsOnEdit(response.props.post) : updatePostsOnCreate(response.props.post)}
+                    {postForEdit ? updatePostsOnEdit(response.props.new_post) : updatePostsOnCreate(response.props.new_post)}
                 }}
-                onError={() => {
-                    toast.error('Failed to save post.');
-                }
-                }
+                onError={(e:any) => {
+                    toast.error('Failed to save post. '+e.props.errors.join(' '));
+                }}
                 resetOnSuccess
                 disableWhileProcessing
                 options={{
@@ -154,6 +155,7 @@ const PostCreateModal = ({isOpen, onOpenChange, postForEdit, groups, activeGroup
                                     </div>
 
                                     {/* Group */}
+                                    {!postForEdit &&
                                     <div className="grid gap-2">
                                         <Label htmlFor='group' required>Group</Label>
 
@@ -174,6 +176,7 @@ const PostCreateModal = ({isOpen, onOpenChange, postForEdit, groups, activeGroup
 
                                         <InputError message={errors.group} />
                                     </div>
+                                    }
 
                                     {/* File picker */}
                                     <div className="grid gap-2">
@@ -182,7 +185,9 @@ const PostCreateModal = ({isOpen, onOpenChange, postForEdit, groups, activeGroup
                                         <FileUploader
                                             files={files}
                                             setFiles={setFiles}
-                                            maxFiles={5} />
+                                            maxFiles={5}
+                                            allowMultiple={true}
+                                        />
 
                                         <InputError message={errors.files} />
                                     </div>

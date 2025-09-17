@@ -46,4 +46,18 @@ class User extends Authenticatable
     public function groups() : BelongsToMany{
         return $this->belongsToMany(Group::class);
     }
+
+    public function posts() : HasMany{
+        return $this->hasMany(Post::class);
+    }
+
+    public function savedPosts() : BelongsToMany
+    {
+        return $this->belongsToMany(Post::class, 'user_post_saved');
+    }
+
+    public function followingPosts() : BelongsToMany
+    {
+        return $this->belongsToMany(Post::class, 'user_post_following');
+    }
 }

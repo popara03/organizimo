@@ -1,13 +1,11 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PostController;
 use App\Http\Middleware\CheckUserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Models\Group;
-use Illuminate\Support\Facades\Auth;
 
 // test route
 Route::post('print', function(Request $request){
@@ -20,7 +18,7 @@ Route::get('/', function () {
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard', [PostController::class, 'index'])->name('dashboard');
 
     Route::get('profile', function(){
         return Inertia::render('settings/profile');

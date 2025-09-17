@@ -25,9 +25,9 @@ type PostDTO = {
     files: [
         {
             id: number;
-            url: string;
             name: string;
             type: string;
+            path: string;
         }
     ];
     status: boolean;
@@ -102,13 +102,13 @@ const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDT
     <>
         <div className={`relative w-full h-full max-w-[460px] min-h-[300px] max-h-[300px] p-4 flex flex-col gap-2 bg-primary rounded-md shadow-md overflow-hidden ${className} ${isPreviewed && 'max-w-full min-h-full max-h-full gap-4'}`}>
             {/* header */}
-            <div className="relative sm:pb-2 flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-4 sm:border-b border-secondary/10">
+            <div className="relative sm:pb-2 flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-2 sm:border-b border-secondary/10">
                 {/* author details and title */}
                 <div className="min-w-0 flex items-center gap-2">
                     { post?.author?.image ?
-                        <img src={'/storage/'+post.author.image} alt={post.author.name} className="size-9 rounded-full" />
+                        <img src={'/storage/'+post.author.image} alt={post.author.name} className="w-10 h-10 flex-shrink-0 object-cover object-center rounded-full" />
                     :
-                        <img src="/icons/user.svg" alt={post.author.name} className="size-9 rounded-full bg-accent-lime"/>
+                        <img src="/icons/user.svg" alt={post.author.name} className="w-10 h-10 flex-shrink-0 object-cover object-[50%_0.2rem] rounded-full bg-accent-lime"/>
                     }
 
                     <div className="min-w-0 flex flex-col text-secondary ">
@@ -217,8 +217,8 @@ const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDT
                     <div className='w-full flex flex-wrap gap-2'>
                         { post.files.map((file) => (
                             file.type === "image" && (
-                                <a href={`/storage/${file.url}`} target="_blank" key={file.id}>
-                                    <img src={`/storage/${file.url}`} alt={file.name} className={`w-20 h-auto aspect-square rounded-md object-cover ${isPreviewed && 'w-48'}`} />
+                                <a href={`/storage/${file.path}`} target="_blank" key={file.id}>
+                                    <img src={`/storage/${file.path}`} alt={file.name} className={`w-20 h-auto aspect-square rounded-md object-cover ${isPreviewed && 'w-48'}`} />
                                 </a>
                             )
                         ))}
@@ -231,7 +231,7 @@ const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDT
                     <div className='w-full flex flex-col gap-2'>
                         { post.files.map((file) => (
                             file.type !== "image" && (
-                                <a key={file.id} href={`/storage/${file.url}`} target="_blank" className="w-fit flex items-center gap-2">
+                                <a key={file.id} href={`/storage/${file.path}`} target="_blank" className="w-fit flex items-center gap-2">
                                     <FileIcon className='size-4 *:fill-accent-blue' />
                                     <span className='text-sm text-secondary'>{file.name}</span>
                                 </a>

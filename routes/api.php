@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\admin\GroupController;
 use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Middleware\CheckUserRole;
@@ -15,6 +16,10 @@ Route::middleware('auth')->group(function(){
     // change password
     Route::post('change-password', [PasswordController::class, 'update'])
         ->name('change-password');
+
+    // posts
+    Route::post('create-post', [PostController::class, 'store'])
+        ->name('create-post');
 });
 
 // Admin dashboard endpoints

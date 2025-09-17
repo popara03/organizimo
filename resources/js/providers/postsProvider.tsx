@@ -189,11 +189,11 @@ const PostsProvider = ({ children } : { children: React.ReactNode }) => {
     }
 
     const updatePostsOnCreate = (post: any) => {
-        setPosts([...posts, post]);
+        setPosts((prevPosts) => [post, ...prevPosts]);
     }
 
     const updatePostsOnEdit = (updatedPost: any) => {
-        setPosts(posts.map((post) => post.id === updatedPost.id ? updatedPost : post));
+        setPosts((prevPosts) => prevPosts.map((post) => post.id === updatedPost.id ? updatedPost : post));
     }
 
     return (

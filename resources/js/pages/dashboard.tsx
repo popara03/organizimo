@@ -325,9 +325,9 @@ function DashboardContent() {
 
         {/* posts */}
         <div className="w-full py-8 flex flex-wrap gap-4">
-            {posts.length > 0 ? posts.map((post:any) => (
+            {posts.length > 0 ? posts.map((post:any, index:number) => (
                 <Post 
-                key={post.id} 
+                key={index} 
                 post={post} 
                 openModalForEdit={openModalForEdit}
                 />
