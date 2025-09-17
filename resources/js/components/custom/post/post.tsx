@@ -100,7 +100,7 @@ const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDT
 
     return (
     <>
-        <div className={`relative w-full h-full max-w-[460px] min-h-[300px] max-h-[300px] p-4 flex flex-col gap-2 bg-primary rounded-md shadow-md overflow-hidden ${className} ${isPreviewed && 'max-w-full min-h-full max-h-full gap-4'}`}>
+        <div className={`relative w-full h-full max-w-[460px] min-h-[300px] max-h-[300px] p-4 flex flex-col gap-2 bg-primary rounded-md shadow-md overflow-hidden ${className} ${isPreviewed && 'max-w-full min-h-full max-h-full gap-4 shadow-none'}`}>
             {/* header */}
             <div className="relative sm:pb-2 flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-2 sm:border-b border-secondary/10">
                 {/* author details and title */}
@@ -272,6 +272,7 @@ const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDT
         isOpen={isPreviewOpen}
         togglePreview={openPreview}
         post={post}
+        openModalForEdit={openModalForEdit}
         />
     </>
   )

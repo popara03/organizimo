@@ -18,11 +18,11 @@ type PostPreviewModalProps = {
     isOpen: boolean;
     togglePreview: (post:any) => void;
     post: any;
+    openModalForEdit: (post:any) => void;
 }
 
-const PostPreviewModal = ({ isOpen, togglePreview, post } : PostPreviewModalProps) => {
-    const ctx = useContext(PostsContext);
-    const { posts } = ctx;
+const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : PostPreviewModalProps) => {
+    const { posts } = useContext(PostsContext);
 
     const [newComment, setNewComment] = useState("");
 
@@ -72,11 +72,11 @@ const PostPreviewModal = ({ isOpen, togglePreview, post } : PostPreviewModalProp
         post={post}
         isPreviewed={true}
         className='flex-1'
+        openModalForEdit={openModalForEdit}
         />
 
         {/* comments */}
-        {post && post.comments && post.comments.length > 0 && (
-            <div className="p-4 flex flex-col gap-4">
+        <div className="p-4 flex flex-col gap-4">
             {/* comment input */}
             <div className='w-full flex flex-col gap-2 px-4 py-2 bg-secondary rounded-md'>
                 { replyingTo && 
@@ -122,16 +122,16 @@ const PostPreviewModal = ({ isOpen, togglePreview, post } : PostPreviewModalProp
                 </div>
             </div>
 
-            {post.comments.map((comment: any) => (
-                <Comment
-                    key={comment.id}
-                    comment={comment}
-                    onReply={handleReply}
-                />
-            ))}
-            </div>
-        )}
-
+            {post && post.comments && post.comments.length > 0 && (
+                post.comments.map((comment: any) => (
+                    <Comment
+                        key={comment.id}
+                        comment={comment}
+                        onReply={handleReply}
+                    />
+                ))
+            )}
+        </div>
       </DialogContent>
     </Dialog>
   )

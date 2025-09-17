@@ -1,3 +1,4 @@
+import { usePage } from '@inertiajs/react';
 import axios from 'axios';
 import React, { createContext, useEffect, useState } from 'react'
 import { flushSync } from 'react-dom';
@@ -44,89 +45,8 @@ export type PostDTO = {
 }
 
 const PostsProvider = ({ children } : { children: React.ReactNode }) => {
-    // dummy data for testing post
-    const dummyPosts = [
-        {
-            id: 1,
-            title: "Lorem ipsum dolor sit amet consectetur adipisicing elit 1. Lorem ipsum dolor sit amet consectetur adipisicing elit 1. Lorem ipsum dolor sit amet consectetur adipisicing elit 1.",
-            content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod. Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-            files: [
-                { id: 3, name: "presentation.txt", url: "documents/presentation.txt", type: "document" },
-                { id: 4, name: "instructions.txt", url: "documents/instructions.txt", type: "document" },
-            ],
-            status: true,
-            createdAt: "2025-09-05 20:54:12",
-            group: {
-                id: 1,
-                name: "Group 1",
-                color: "lime",
-            },
-            author: {
-                id: 1,
-                name: "Author 1",
-                image: null,
-            },
-            comments: [
-                {
-                    id: 1,
-                    post_id: 1,
-                    author: {
-                        id: 1,
-                        name: "Commenter 1",
-                        image: null,
-                    },
-                    content: "This is a comment.",
-                    created_at: "2025-09-05 20:54:12",
-                    parent_id: null,
-                    replies: [
-                        {
-                            id: 2,
-                            post_id: 1,
-                            author: {
-                                id: 2,
-                                name: "Commenter 2",
-                                image: null,
-                            },
-                            content: "This is a reply.",
-                            created_at: "2025-09-05 20:54:12",
-                            parent_id: 1,
-                            replies: [
-                                {
-                                    id: 3,
-                                    post_id: 1,
-                                    author: {
-                                        id: 3,
-                                        name: "Commenter 3",
-                                        image: null,
-                                    },
-                                    content: "This is reply to a reply.",
-                                    created_at: "2025-09-05 20:54:12",
-                                    parent_id: 2,
-                                    replies: [
-                                        {
-                                            id: 4,
-                                            post_id: 1,
-                                            author: {
-                                                id: 4,
-                                                name: "Commenter 4",
-                                                image: null,
-                                            },
-                                            content: "This is a reply to a replyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy.",
-                                            created_at: "2025-09-05 20:54:12",
-                                            parent_id: 3,
-                                            replies: [],
-                                        }
-                                    ],
-                                },
-                            ],
-                        },
-                    ],
-                }
-            ],
-        },
-    ];
-
-    const [posts, setPosts] = useState<any[]>(dummyPosts);
+    const {posts : postList} = usePage().props;
+    const [posts, setPosts] = useState<any[]>(postList as any || []);
     
     // post change handlers
     const savePost = (postId: number, isSaved: boolean) => {
