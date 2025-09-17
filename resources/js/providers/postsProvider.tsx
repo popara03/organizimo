@@ -2,6 +2,7 @@ import { usePage } from '@inertiajs/react';
 import axios from 'axios';
 import React, { createContext, useEffect, useState } from 'react'
 import { flushSync } from 'react-dom';
+import { toast } from 'sonner';
 
 export const PostsContext = createContext<any>(null);
 
@@ -49,63 +50,64 @@ const PostsProvider = ({ children } : { children: React.ReactNode }) => {
     const [posts, setPosts] = useState<any[]>(postList as any || []);
     
     // post change handlers
-    const savePost = (postId: number, isSaved: boolean) => {
-        // axios call here
-
-        setPosts(() =>
-            posts.map((post) =>
-                post.id === postId ? { ...post, isSaved } : post
-            )
-        );
+    const savePost = (postId: number) => {
+        axios.post('/save-post/'+postId)
+        .then(r => {
+            const { isSaved } = r.data;
+            setPosts(() => posts.map((post) => post.id === postId ? { ...post, isSaved } : post));
+            toast.success(isSaved ? "Post saved successfully." : "Post unsaved successfully.");
+        })
+        .catch(e => {
+            toast.error("Error saving post: "+e.response.data.error);
+        });
     }
 
     const followPost = (postId: number, isFollowing: boolean) => {
-        // axios call here
-        
-        setPosts(() =>
-            posts.map((post) =>
-                post.id === postId ? { ...post, isFollowing } : post
-            )
-        );
+        axios.post('/follow-post/'+postId)
+        .then(r => {
+            const { isFollowing } = r.data;
+            setPosts(() => posts.map((post) => post.id === postId ? { ...post, isFollowing } : post));
+            toast.success(isFollowing ? "Post followed successfully." : "Post unfollowed successfully.");
+        })
+        .catch(e => {
+            toast.error("Error following post: "+e.response.data.error);
+        });
     }
 
     const changeStatus = (postId: number, status: string) => {
         const isActive = status === "1" ? true : false;
-        
-        setPosts(() =>
-            posts.map((post) =>
-                post.id === postId ? { ...post, status: isActive } : post
-            )
-        );
 
-        console.log("Change post status for id:", postId, " to ", isActive);
-        return;
+        // if post is already in desired status, do nothing
+        const post = posts.find((p) => p.id === postId);
+        if (post.status == isActive) {
+            toast.info('Post is already in the desired status.');
+            return;
+        }
 
-        // axios call here
-        axios.post(`/update-post-status/${postId}`, { status: isActive })
-        .then(response => {
-                console.log('Post status updated successfully:', response.data);
-                
-                
-            })
-            .catch(error => {
-                console.error('Error updating post status:', error);
-            }
-        );
+        axios.post(`/change-post-status/${postId}`, { status: isActive })
+        .then(r => {
+            toast.success('Post status updated successfully.');
+
+            setPosts(() => {
+                return posts.map((post) =>
+                    post.id === postId ? { ...post, status: isActive } : post
+                );
+            });
+        })
+        .catch(e => {
+            toast.error('Error updating post status:', e.response.data.error);
+        });
     }
 
-    const deletePost = async (id:number) => {
-        console.log("Delete post with id:", id);
-        return;
-
-        const r = await axios.delete(`/delete-post/${id}`);
-        
-        if(r.status === 200){
+    const deletePost = (id:number) => {
+        axios.delete(`/delete-post/${id}`)
+        .then(data => {
             setPosts(posts.filter((post: any) => post.id !== id));
-        }
-        else {
-            console.error('Failed to delete post. ' + r.data.message);
-        }
+            toast.success('Post deleted successfully.');
+        })
+        .catch(e => {
+            toast.error('Failed to delete post. ' + e.response.data.error);
+        });
     }
 
     const updatePostsOnCreate = (post: any) => {

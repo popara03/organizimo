@@ -78,7 +78,7 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
         {/* comments */}
         <div className="p-4 flex flex-col gap-4">
             {/* comment input */}
-            <div className='w-full flex flex-col gap-2 px-4 py-2 bg-secondary rounded-md'>
+            <div className={`w-full flex flex-col gap-2 px-4 py-2 bg-secondary rounded-md ${post.status == false ? "opacity-25 pointer-events-none" : ""}`}>
                 { replyingTo && 
                 <div className='flex items-center gap-2 text-sm text-gray-500'>
                     <p>

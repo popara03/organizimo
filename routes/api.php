@@ -20,6 +20,23 @@ Route::middleware('auth')->group(function(){
     // posts
     Route::post('create-post', [PostController::class, 'store'])
         ->name('create-post');
+
+    Route::post('update-post', [PostController::class, 'update'])
+        ->name('update-post');
+
+    Route::post('change-post-status/{id}', [PostController::class, 'changeStatus'])
+        ->name('change-post-status');
+
+    // works as toggle
+    Route::post('save-post/{id}', [PostController::class, 'savePost'])
+        ->name('save-post');
+
+    // works as toggle
+    Route::post('follow-post/{id}', [PostController::class, 'followPost'])
+        ->name('follow-post');
+
+    Route::delete('delete-post/{id}', [PostController::class, 'destroy'])
+        ->name('delete-post');
 });
 
 // Admin dashboard endpoints

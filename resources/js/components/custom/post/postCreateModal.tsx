@@ -62,6 +62,7 @@ const PostCreateModal = ({isOpen, onOpenChange, postForEdit, groups, activeGroup
             };
 
             if (postForEdit?.files && postForEdit.files.length > 0) {
+                setFiles([]);
                 postForEdit.files.forEach((f:any) => {
                     loadFileFromPath(f);
                 });

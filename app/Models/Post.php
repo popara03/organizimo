@@ -29,15 +29,19 @@ class Post extends Model
     {
         return $this->hasMany(Attachment::class);
     }
-
+    
     public function savedByUsers() : BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'user_post_saved');
+        return $this
+        ->belongsToMany(User::class, 'user_post_saved')
+        ->withTimestamps();
     }
 
     public function followedByUsers() : BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'user_post_following');
+        return $this
+        ->belongsToMany(User::class, 'user_post_following')
+        ->withTimestamps();
     }
 
     public function comments()
