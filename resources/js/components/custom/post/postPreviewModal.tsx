@@ -31,6 +31,18 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
         setReplyingTo(comment);
     }
 
+    const addReply = (comments: any[], parentId: number, reply: any): any[] => {
+        return comments.map(c => {
+            if(c.id === parentId) {
+                return { ...c, replies: [...c.replies, reply] };
+            }
+            if(c.replies && c.replies.length > 0) {
+                return { ...c, replies: addReply(c.replies, parentId, reply) };
+            }
+            return c;
+        });
+    };
+
     const submitComment = (content: string, replyingTo: any) => {
         const data = {
             content,
@@ -42,17 +54,25 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
         .then(r => {
             // update posts context, take care of parent and child comments too
             const comment = r.data.comment;
-            const updatedPosts = posts.map((p: any) => {
-                if (p.id === post.id) {
-                    return {
-                        ...p,
-                        comments: [comment, ...p.comments]
-                    };
-                }
-                return p;
-            });
+            console.log(comment);
 
-            setPosts(updatedPosts);
+            if(comment.parent_id) {
+                const updatedPosts = posts.map((p:any) => {
+                    if(p.id === post.id) {
+                        return { ...p, comments: addReply(p.comments, comment.parent_id, comment) }
+                    }
+                    return p;
+                });
+                setPosts(updatedPosts);
+            } else {
+                const updatedPosts = posts.map((p:any) => {
+                    if(p.id === post.id) {
+                        return { ...p, comments: [...p.comments, comment] }
+                    }
+                    return p;
+                });
+                setPosts(updatedPosts);
+            }
             
             toast.success("Comment submitted successfully");
             
@@ -99,8 +119,11 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
                     </Button>
                 </div>
                 }
-                
-                <div className="flex gap-2">
+
+                <form className="flex gap-2" onSubmit={(e) => {
+                    e.preventDefault();
+                    submitComment(newComment, replyingTo);
+                }}>
                     <Input
                     placeholder="Write a comment"
                     className="
@@ -112,18 +135,16 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
                     onChange={(e) => setNewComment(e.target.value)} />
 
                     <Button
+                    type='submit'
                     variant={'ghost'}
                     className='!p-0'
-                    onClick={() => {
-                        submitComment(newComment, replyingTo);
-                    }}
                     disabled={newComment.trim() === ""}
                     >
                         <svg className='size-5' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M22 11V13H21V14H20V15H18V16H16V17H15V18H13V19H11V20H10V21H8V22H6V23H3V22H2V2H3V1H6V2H8V3H10V4H11V5H13V6H15V7H16V8H18V9H20V10H21V11H22Z" fill="black"/>
                         </svg>
                     </Button>
-                </div>
+                </form>
             </div>
 
             {post && post.comments && post.comments.length > 0 && (

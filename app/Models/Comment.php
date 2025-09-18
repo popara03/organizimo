@@ -32,4 +32,9 @@ class Comment extends Model
     {
         return $this->hasMany(Comment::class, 'parent_id');
     }
+
+    public function childrenRecursive()
+    {
+        return $this->children()->with('childrenRecursive');
+    }
 }

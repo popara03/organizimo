@@ -43,7 +43,11 @@ class PostController extends Controller
                 'name' => $post->user->name,
                 'image' => $post->user->image,
             ],
-            'comments' => $post->comments->map(fn($comment) => CommentController::formatComment($comment)),
+            'comments' => $post->comments
+                ->whereNull('parent_id')
+                ->map(fn($comment) => CommentController::formatComment($comment))
+                ->values()
+                ->all(),
         ];
     }
 
@@ -113,8 +117,8 @@ class PostController extends Controller
                     ]);
                 }
             }
-            
-            $response = $this->formatPost($post->load(['group', 'user', 'attachments', 'savedByUsers', 'followedByUsers', 'comments', 'comments.user', 'comments.children', 'comments.children.children']));
+
+            $response = $this->formatPost($post->load(['group', 'user', 'attachments', 'savedByUsers', 'followedByUsers', 'comments', 'comments.user', 'comments.childrenRecursive']));
 
             DB::commit();
 
@@ -314,9 +318,7 @@ class PostController extends Controller
             'savedByUsers',
             'followedByUsers',
             'comments' => function($query) {
-                $query
-                ->whereNull('parent_id')
-                ->with(['user', 'children.user', 'children.children']);
+                $query->with(['user', 'childrenRecursive']);
             }
         ]);
 
