@@ -17,44 +17,39 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { FileIcon } from 'lucide-react';
 import PostPreviewModal from './postPreviewModal';
 import { PostsContext } from '@/providers/postsProvider';
+import { PostComment } from './comment';
+
+type PostFile = {
+    id: number;
+    name: string;
+    type: string;
+    path: string;
+}
+
+type PostAuthor = {
+    id: number;
+    name: string;
+    image?: string | null;
+}
+
+type PostGroup = {
+    id: number;
+    name: string;
+    color: string;
+}
 
 type PostDTO = {
     id: number;
     title: string;
     content: string;
-    files: [
-        {
-            id: number;
-            name: string;
-            type: string;
-            path: string;
-        }
-    ];
+    files: PostFile[];
     status: boolean;
-    createdAt: string;
-    isSaved: boolean;
-    isFollowing: boolean;
-    group: {
-        id: number;
-        name: string;
-        color: string;
-    };
-    author: {
-        id: number;
-        name: string;
-        image: string;
-    };
-    comments: Array<{
-        id: number;
-        content: string;
-        author: {
-            id: number;
-            name: string;
-            image: string;
-        };
-        parentId: number | null;
-        createdAt: string;
-    }>;
+    created_at: string;
+    is_saved: boolean;
+    is_following: boolean;
+    group: PostGroup;
+    author: PostAuthor;
+    comments: PostComment[];
 }
 
 const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDTO, isPreviewed?: boolean, openModalForEdit: (post: PostDTO) => void, className?: string }) => {
@@ -134,15 +129,15 @@ const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDT
                 <div className={`w-full sm:w-fit h-full flex items-center justify-around sm:justify-start gap-4 border-b sm:border-none border-secondary/10 pb-2 sm:pb-0`}>
                     {/* save post */}
                     <Button className='p-0 bg-transparent' asChild onClick={() => { savePost(post.id) }}>
-                        <svg className={`w-6 h-6 ${post.isSaved ? "*:fill-accent-blue" : "*:fill-white"}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg className={`w-6 h-6 ${post.is_saved ? "*:fill-accent-blue" : "*:fill-white"}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M20 2V23H19V22H18V21H17V20H16V19H15V18H14V17H13V16H11V17H10V18H9V19H8V20H7V21H6V22H5V23H4V2H5V1H19V2H20Z" fill="white"/>
                         </svg>
                     </Button>
 
                     {/* follow post */}
                     {post.author.id != activeUser.id && (
-                        <Button className='p-0 bg-transparent' asChild onClick={() => { followPost(post.id, post.isFollowing ? false : true); }}>
-                            <svg className={`w-6 h-6 ${post.isFollowing ? "*:fill-accent-purple" : "*:fill-white"}`} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <Button className='p-0 bg-transparent' asChild onClick={() => { followPost(post.id, post.is_following ? false : true); }}>
+                            <svg className={`w-6 h-6 ${post.is_following ? "*:fill-accent-purple" : "*:fill-white"}`} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M20 26.6667V29.3333H18.6667V30.6667H13.3333V29.3333H12V26.6667H20Z" fill="#EEEEEE"/>
                             <path d="M29.3333 22.6667V24H28V25.3333H3.99996V24H2.66663V22.6667H3.99996V21.3333H5.33329V18.6667H6.66663V10.6667H7.99996V8H9.33329V6.66667H10.6666V5.33333H13.3333V4H14.6666V1.33333H17.3333V4H18.6666V5.33333H21.3333V6.66667H22.6666V8H24V10.6667H25.3333V18.6667H26.6666V21.3333H28V22.6667H29.3333Z" fill="#EEEEEE"/>
                             </svg>
@@ -264,7 +259,7 @@ const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDT
                 </Button>
 
                 <span className="text-sm text-secondary font-bold">
-                    {new Date(post.createdAt).toLocaleString("en-US", {
+                    {new Date(post.created_at).toLocaleString("en-US", {
                         day: "2-digit",
                         month: "2-digit",
                         year: "numeric",

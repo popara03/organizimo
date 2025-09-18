@@ -48,14 +48,15 @@ export type PostDTO = {
 const PostsProvider = ({ children } : { children: React.ReactNode }) => {
     const {posts : postList} = usePage().props;
     const [posts, setPosts] = useState<any[]>(postList as any || []);
+    console.log(posts)
     
     // post change handlers
     const savePost = (postId: number) => {
         axios.post('/save-post/'+postId)
         .then(r => {
-            const { isSaved } = r.data;
-            setPosts(() => posts.map((post) => post.id === postId ? { ...post, isSaved } : post));
-            toast.success(isSaved ? "Post saved successfully." : "Post unsaved successfully.");
+            const { is_saved } = r.data;
+            setPosts((prev) => prev.map((post) => post.id === postId ? { ...post, is_saved } : post));
+            toast.success(is_saved ? "Post saved successfully." : "Post unsaved successfully.");
         })
         .catch(e => {
             toast.error("Error saving post: "+e.response.data.error);
@@ -65,9 +66,9 @@ const PostsProvider = ({ children } : { children: React.ReactNode }) => {
     const followPost = (postId: number, isFollowing: boolean) => {
         axios.post('/follow-post/'+postId)
         .then(r => {
-            const { isFollowing } = r.data;
-            setPosts(() => posts.map((post) => post.id === postId ? { ...post, isFollowing } : post));
-            toast.success(isFollowing ? "Post followed successfully." : "Post unfollowed successfully.");
+            const { is_following } = r.data;
+            setPosts((prev) => prev.map((post) => post.id === postId ? { ...post, is_following } : post));
+            toast.success(is_following ? "Post followed successfully." : "Post unfollowed successfully.");
         })
         .catch(e => {
             toast.error("Error following post: "+e.response.data.error);

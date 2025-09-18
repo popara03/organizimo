@@ -12,10 +12,41 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
-use phpDocumentor\Reflection\Types\Integer;
+use App\Http\Controllers\CommentController;
 
 class PostController extends Controller
 {
+    private function formatPost($post){
+        return [
+            'id' => $post->id,
+            'title' => $post->title,
+            'content' => $post->content,
+            'files' => $post->attachments->map(function($file) {
+                return [
+                    'id' => $file->id,
+                    'name' => $file->name,
+                    'type' => $file->type,
+                    'path' => $file->path,
+                ];
+            }),
+            'status' => $post->status,
+            'created_at' => $post->created_at,
+            'is_saved' => $post->savedByUsers?->contains(Auth::id()),
+            'is_following' => $post->followedByUsers?->contains(Auth::id()),
+            'group' => [
+                'id' => $post->group->id,
+                'name' => $post->group->name,
+                'color' => $post->group->color,
+            ],
+            'author' => [
+                'id' => $post->user->id,
+                'name' => $post->user->name,
+                'image' => $post->user->image,
+            ],
+            'comments' => $post->comments->map(fn($comment) => CommentController::formatComment($comment)),
+        ];
+    }
+
     public function index(){
         $groups = Group::with('users')
         ->where('is_ffa', true)
@@ -24,7 +55,18 @@ class PostController extends Controller
         })
         ->get();
 
-        $posts = Post::with(['group', 'user', 'attachments', 'savedByUsers', 'followedByUsers', 'comments'])
+        $posts = Post::with([
+            'group',
+            'user',
+            'attachments',
+            'savedByUsers',
+            'followedByUsers',
+            'comments' => function($query) {
+                $query
+                ->whereNull('parent_id')
+                ->with(['user', 'children.user', 'children.children']);
+            }
+        ])
         ->where(function ($query) use ($groups) {
             $query->whereIn('group_id', $groups->pluck('id'));
         })
@@ -37,47 +79,7 @@ class PostController extends Controller
         return Inertia::render('dashboard', [
             'groups' => $groups,
             'users' => $users,
-            'posts' => $posts->map(function($post) {
-                return [
-                    'id' => $post->id,
-                    'title' => $post->title,
-                    'content' => $post->content,
-                    'files' => $post->attachments->map(function($file) {
-                        return [
-                            'id' => $file->id,
-                            'name' => $file->name,
-                            'type' => $file->type,
-                            'path' => $file->path,
-                        ];
-                    }),
-                    'status' => $post->status,
-                    'createdAt' => $post->created_at,
-                    'isSaved' => $post->savedByUsers?->where('id', Auth::id())->first() ? true : false,
-                    'isFollowing' => $post->followedByUsers?->where('id', Auth::id())->first() ? true : false,
-                    'group' => [
-                        'id' => $post->group->id,
-                        'name' => $post->group->name,
-                        'color' => $post->group->color,
-                    ],
-                    'author' => [
-                        'id' => $post->user->id,
-                        'name' => $post->user->name,
-                        'image' => $post->user->image,
-                    ],
-                    'comments' => $post->comments()->with('user')->get()->map(function($comment) {
-                        return [
-                            'id' => $comment->id,
-                            'content' => $comment->content,
-                            'createdAt' => $comment->created_at,
-                            'author' => [
-                                'id' => $comment->user->id,
-                                'name' => $comment->user->name,
-                                'image' => $comment->user->image,
-                            ],
-                        ];
-                    }),
-                ];
-            })
+            'posts' => $posts->map(fn($post) => $this->formatPost($post)),
         ]);
     }
 
@@ -112,38 +114,10 @@ class PostController extends Controller
                 }
             }
             
-            $response = [
-            'id' => $post->id,
-            'title' => $post->title,
-            'content' => $post->content,
-            'files' => $post->attachments->map(function($file) {
-                return [
-                    'id' => $file->id,
-                    'name' => $file->name,
-                    'type' => $file->type,
-                    'path' => $file->path,
-                ];
-            }),
-            'status' => $post->status,
-            'createdAt' => $post->created_at,
-            'isSaved' => $post->savedByUsers?->where('id', Auth::id())->first() ? true : false,
-            'isFollowing' => $post->followedByUsers?->where('id', Auth::id())->first() ? true : false,
-            'group' => [
-                'id' => $post->group->id,
-                'name' => $post->group->name,
-                'color' => $post->group->color,
-            ],
-            'author' => [
-                'id' => $post->user->id,
-                'name' => $post->user->name,
-                'image' => $post->user->image,
-            ],
-            'comments' => [],
-            ];
+            $response = $this->formatPost($post->load(['group', 'user', 'attachments', 'savedByUsers', 'followedByUsers', 'comments', 'comments.user', 'comments.children', 'comments.children.children']));
 
             DB::commit();
 
-            // todo: optimize this with axios call in frontend in stead inertia form submit
             $groups = Group::with('users')
             ->where('is_ffa', true)
             ->orWhereHas('users', function ($q) {
@@ -217,27 +191,27 @@ class PostController extends Controller
 
             // id check
             if(!$id || !is_numeric($id)){
-                return request()->json(['error' => 'Invalid post ID.'], 400);
+                return response()->json(['error' => 'Invalid post ID.'], 400);
             }
 
             // find post
             $post = Post::find($id);
             if (!$post) {
-                return request()->json(['error' => 'Post not found.'], 404);
+                return response()->json(['error' => 'Post not found.'], 404);
             }
 
             // check if the authenticated user is the owner of the post or admin
             if ($post->user_id !== Auth::id() && Auth::user()->role->name !== 'admin') {
-                return request()->json(['error' => 'You are not authorized to change the status of this post.'], 403);
+                return response()->json(['error' => 'You are not authorized to change the status of this post.'], 403);
             }
 
             $post->update([
                 'status' => $request->status,
             ]);
 
-            return request()->json(['success' => 'Post status updated successfully.'], 200);
+            return response()->json(['success' => 'Post status updated successfully.'], 200);
         } catch (Exception $e) {
-            return request()->json(['error' => 'Failed to change post status. '.$e->getMessage()], 500);
+            return response()->json(['error' => 'Failed to change post status. '.$e->getMessage()], 500);
         }
     }
 
@@ -258,11 +232,11 @@ class PostController extends Controller
             if ($post->savedByUsers->contains($user->id)) {
                 // unsave
                 $post->savedByUsers()->detach($user->id);
-                return response()->json(['success' => 'Post unsaved successfully.', 'isSaved' => false], 200);
+                return response()->json(['success' => 'Post unsaved successfully.', 'is_saved' => false], 200);
             } else {
                 // save
                 $post->savedByUsers()->attach($user->id);
-                return response()->json(['success' => 'Post saved successfully.', 'isSaved' => true], 200);
+                return response()->json(['success' => 'Post saved successfully.', 'is_saved' => true], 200);
             }
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to toggle save post. '.$e->getMessage()], 500);
@@ -286,11 +260,11 @@ class PostController extends Controller
             if ($post->followedByUsers->contains($user->id)) {
                 // unfollow
                 $post->followedByUsers()->detach($user->id);
-                return response()->json(['success' => 'Post unfollowed successfully.', 'isFollowing' => false], 200);
+                return response()->json(['success' => 'Post unfollowed successfully.', 'is_following' => false], 200);
             } else {
                 // follow
                 $post->followedByUsers()->attach($user->id);
-                return response()->json(['success' => 'Post followed successfully.', 'isFollowing' => true], 200);
+                return response()->json(['success' => 'Post followed successfully.', 'is_following' => true], 200);
             }
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to toggle follow post. '.$e->getMessage()], 500);
@@ -333,7 +307,19 @@ class PostController extends Controller
     }
 
     public function filterPosts(Request $request){
-        $query = Post::with(['group', 'user', 'attachments', 'savedByUsers', 'followedByUsers', 'comments']);
+        $query = Post::with([
+            'group',
+            'user',
+            'attachments',
+            'savedByUsers',
+            'followedByUsers',
+            'comments' => function($query) {
+                $query
+                ->whereNull('parent_id')
+                ->with(['user', 'children.user', 'children.children']);
+            }
+        ]);
+
         $query->where(function ($q) {
             $groups = Group::with('users')
             ->where('is_ffa', true)
@@ -404,47 +390,7 @@ class PostController extends Controller
         });
 
         return response()->json([
-            'posts' => $posts->map(function($post) {
-                return [
-                    'id' => $post->id,
-                    'title' => $post->title,
-                    'content' => $post->content,
-                    'files' => $post->attachments->map(function($file) {
-                        return [
-                            'id' => $file->id,
-                            'name' => $file->name,
-                            'type' => $file->type,
-                            'path' => $file->path,
-                        ];
-                    }),
-                    'status' => $post->status,
-                    'createdAt' => $post->created_at,
-                    'isSaved' => $post->savedByUsers?->where('id', Auth::id())->first() ? true : false,
-                    'isFollowing' => $post->followedByUsers?->where('id', Auth::id())->first() ? true : false,
-                    'group' => [
-                        'id' => $post->group->id,
-                        'name' => $post->group->name,
-                        'color' => $post->group->color,
-                    ],
-                    'author' => [
-                        'id' => $post->author->id,
-                        'name' => $post->author->name,
-                        'image' => $post->author->image,
-                    ],
-                    'comments' => $post->comments()->with('user')->get()->map(function($comment) {
-                        return [
-                            'id' => $comment->id,
-                            'content' => $comment->content,
-                            'createdAt' => $comment->created_at,
-                            'author' => [
-                                'id' => $comment->user->id,
-                                'name' => $comment->user->name,
-                                'image' => $comment->user->image,
-                            ],
-                        ];
-                    }),
-                ];
-            }),
+            'posts' => $posts->map(fn($post) => $this->formatPost($post)),
             'users' => $users,
         ], 200);
     }

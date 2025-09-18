@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 
-export type Comment = {
+export type PostComment = {
     id: number;
     post_id: number;
     author: {
@@ -11,10 +11,10 @@ export type Comment = {
     content: string;
     created_at: string;
     parent_id?: number;
-    replies?: Comment[];
+    replies?: PostComment[];
 }
 
-const Comment = ({ comment, onReply, depth = 0, parentAuthorName } : { comment: Comment, onReply: (comment: Comment) => void, depth?: number, parentAuthorName?: string } ) => {
+const Comment = ({ comment, onReply, depth = 0, parentAuthorName } : { comment: PostComment, onReply: (comment: PostComment) => void, depth?: number, parentAuthorName?: string } ) => {
     return (
     <div className={`w-full ${depth <= 1 ? "p-4 gap-2" : "gap-2 border-t border-primary/5 pt-2"} flex flex-col ${depth === 0 ? "bg-secondary" : "bg-tertiary"} rounded-md`}>
       {/* header */}
@@ -30,7 +30,7 @@ const Comment = ({ comment, onReply, depth = 0, parentAuthorName } : { comment: 
                 <p className='font-semibold'>{comment.author.name}</p>
 
                 <p className='text-xs text-gray-500'>
-                    {new Date(comment.created_at?.replace(" ", "T")).toLocaleString("en-US", {
+                    {new Date(comment.created_at).toLocaleString("en-US", {
                         day: "2-digit",
                         month: "2-digit",
                         year: "numeric",
@@ -60,7 +60,7 @@ const Comment = ({ comment, onReply, depth = 0, parentAuthorName } : { comment: 
       {/* replies */}
       {comment.replies && comment.replies.length > 0 && (
         <div className={`flex flex-col gap-12`}>
-          {comment.replies.map((reply) => (
+          {comment.replies.map((reply : PostComment) => (
             <Comment
             key={reply.id}
             comment={reply}

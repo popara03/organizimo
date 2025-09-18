@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
-    private function formatComment($comment)
+    public static function formatComment($comment)
     {
         return [
             'id' => $comment->id,
@@ -20,9 +20,9 @@ class CommentController extends Controller
                 'image' => $comment->user->image,
             ],
             'content' => $comment->content,
-            'created_at' => $comment->created_at->toISOString(),
+            'created_at' => $comment->created_at->toDateTimeString(),
             'parent_id' => $comment->parent_id,
-            'replies' => $comment->children->map(fn($child) => $this->formatComment($child)),
+            'replies' => $comment->children->map(fn($child) => self::formatComment($child)),
         ];
     }
 

@@ -8,13 +8,12 @@ import {
 } from "@/components/ui/dialog"
 
 import Post from '@/components/custom/post/post';
-import Comment from '@/components/custom/post/comment';
+import Comment, { PostComment } from '@/components/custom/post/comment';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { PostsContext } from '@/providers/postsProvider';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { set } from 'date-fns';
 
 type PostPreviewModalProps = {
     isOpen: boolean;
@@ -128,7 +127,7 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
             </div>
 
             {post && post.comments && post.comments.length > 0 && (
-                post.comments.map((comment: any) => (
+                post.comments.map((comment: PostComment) => (
                     <Comment
                         key={comment.id}
                         comment={comment}
