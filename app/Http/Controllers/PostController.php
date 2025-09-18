@@ -331,4 +331,121 @@ class PostController extends Controller
             return response()->json(['error' => 'Failed to delete post. '.$e->getMessage()], 500);
         }
     }
+
+    public function filterPosts(Request $request){
+        $query = Post::with(['group', 'user', 'attachments', 'savedByUsers', 'followedByUsers', 'comments']);
+        $query->where(function ($q) {
+            $groups = Group::with('users')
+            ->where('is_ffa', true)
+            ->orWhereHas('users', function ($q) {
+                $q->where('users.id', Auth::id());
+            })
+            ->get();
+            $q->whereIn('group_id', $groups->pluck('id'));
+        });
+
+        // group
+        if($request->has('group') && is_numeric($request->group)){
+            $query->where('group_id', $request->group);
+        }
+
+        // personalization can be: "my-posts" | "saved" | "following"
+        if($request->has('personalization') && in_array($request->personalization, ['my-posts', 'saved', 'following'])){
+            if($request->personalization == 'my-posts'){
+                $query->where('user_id', Auth::id());
+            } elseif($request->personalization == 'saved'){
+                $query->whereHas('savedByUsers', function ($q) {
+                    $q->where('users.id', Auth::id());
+                });
+            } elseif($request->personalization == 'following'){
+                $query->whereHas('followedByUsers', function ($q) {
+                    $q->where('users.id', Auth::id());
+                });
+            }
+        }
+
+        // keyword
+        if($request->has('keyword') && is_string($request->keyword)){
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%'.$request->keyword.'%')
+                  ->orWhere('content', 'like', '%'.$request->keyword.'%');
+            });
+        }
+
+        // startDate
+        if($request->has('startDate') && $request->startDate){
+            $query->whereDate('created_at', '>=', $request->startDate);
+        }
+
+        // endDate
+        if($request->has('endDate') && $request->endDate){
+            $query->whereDate('created_at', '<=', $request->endDate);
+        }
+
+        // status
+        if($request->has('status') && in_array($request->status, ['0', '1'])){
+            $query->where('status', $request->status);
+        }
+
+        // selectedUsers
+        if($request->has('selectedUsers') && is_array($request->selectedUsers) && count($request->selectedUsers) > 0){
+            $query->whereIn('user_id', array_filter($request->selectedUsers, 'is_numeric'));
+        }
+
+        // order by latest
+        $posts = $query->orderBy('created_at', 'desc')->get();
+
+        // get all users that are authors of the filtered posts
+        $users = User::whereIn('id', $posts->pluck('user_id'))->get();
+
+        // format each post to include author details
+        $posts->each(function($post) use ($users) {
+            $post->author = $users->where('id', $post->user_id)->first();
+        });
+
+        return response()->json([
+            'posts' => $posts->map(function($post) {
+                return [
+                    'id' => $post->id,
+                    'title' => $post->title,
+                    'content' => $post->content,
+                    'files' => $post->attachments->map(function($file) {
+                        return [
+                            'id' => $file->id,
+                            'name' => $file->name,
+                            'type' => $file->type,
+                            'path' => $file->path,
+                        ];
+                    }),
+                    'status' => $post->status,
+                    'createdAt' => $post->created_at,
+                    'isSaved' => $post->savedByUsers?->where('id', Auth::id())->first() ? true : false,
+                    'isFollowing' => $post->followedByUsers?->where('id', Auth::id())->first() ? true : false,
+                    'group' => [
+                        'id' => $post->group->id,
+                        'name' => $post->group->name,
+                        'color' => $post->group->color,
+                    ],
+                    'author' => [
+                        'id' => $post->author->id,
+                        'name' => $post->author->name,
+                        'image' => $post->author->image,
+                    ],
+                    'comments' => $post->comments()->with('user')->get()->map(function($comment) {
+                        return [
+                            'id' => $comment->id,
+                            'content' => $comment->content,
+                            'createdAt' => $comment->created_at,
+                            'author' => [
+                                'id' => $comment->user->id,
+                                'name' => $comment->user->name,
+                                'image' => $comment->user->image,
+                            ],
+                        ];
+                    }),
+                ];
+            }),
+            'users' => $users,
+        ], 200);
+    }
 }

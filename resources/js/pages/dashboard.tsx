@@ -58,7 +58,7 @@ function DashboardContent() {
     // other data
     const {props} : any = usePage();
     const groups = props.groups;
-    const users = props.users;
+    const [users, setUsers] = useState<any[]>(props.users);
 
     // filters
     const [activeGroupId, setActiveGroup] = useState<number | null>(null);
@@ -101,15 +101,13 @@ function DashboardContent() {
     }, [activeGroupId, personalization, keyword, startDate, endDate, status, selectedUsers]);
 
     const handleFiltering = (filterData:any) => {
-        console.log(filterData)
-        return;
-
-        axios.post('/dashboard/filter', filterData)
+        axios.post('filter-posts', filterData)
         .then(response => {
-            setPosts(response.data);
+            setPosts(response.data.posts);
+            setUsers(response.data.users);
         })
-        .catch(error => {
-            console.error('There was an error!', error);
+        .catch(e => {
+            console.error('There was an error!', e.response?.data?.error);
         });
     }
 
@@ -332,7 +330,7 @@ function DashboardContent() {
                 openModalForEdit={openModalForEdit}
                 />
             )) : (
-                <p className='text-secondary text-base'>No posts found.</p>
+                <p className='mx-auto text-primary text-base font-bold'>No posts found. 🥱</p>
             )}
         </div>
 

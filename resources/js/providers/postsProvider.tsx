@@ -121,6 +121,7 @@ const PostsProvider = ({ children } : { children: React.ReactNode }) => {
     return (
         <PostsContext.Provider value={{
             posts,
+            setPosts,
             savePost,
             followPost,
             changeStatus,

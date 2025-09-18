@@ -40,7 +40,6 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
             post,
         };
 
-        return;
         axios.post('/submit-comment', data)
         .then(r => {
             console.log("Comment submitted successfully");
