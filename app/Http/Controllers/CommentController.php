@@ -27,8 +27,7 @@ class CommentController extends Controller
         ];
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         try{
             $request->validate([
                 'content' => 'required|string|min:2|max:255',
@@ -57,6 +56,26 @@ class CommentController extends Controller
                 'message' => 'Comment submitted successfully',
                 'comment' => $this->formatComment($comment),
             ]);
+        }
+        catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function destroy($id){
+        try{
+            $comment = Comment::find($id);
+            if (!$comment) {
+                return response()->json(['error' => 'Comment not found'], 404);
+            }
+            
+            if ($comment->user_id !== Auth::id() && Auth::user()->role->name != 'admin') {
+                return response()->json(['error' => 'Unauthorized'], 403);
+            }
+
+            $comment->delete();
+
+            return response()->json(['message' => 'Comment deleted successfully']);
         }
         catch(Exception $e){
             return response()->json(['error' => $e->getMessage()], 500);

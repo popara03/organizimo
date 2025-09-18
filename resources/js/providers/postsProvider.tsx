@@ -48,7 +48,6 @@ export type PostDTO = {
 const PostsProvider = ({ children } : { children: React.ReactNode }) => {
     const {posts : postList} = usePage().props;
     const [posts, setPosts] = useState<any[]>(postList as any || []);
-    console.log(posts)
     
     // post change handlers
     const savePost = (postId: number) => {

@@ -44,9 +44,6 @@ Route::middleware('auth')->group(function(){
     Route::post('submit-comment', [CommentController::class, 'store'])
         ->name('submit-comment');
 
-    Route::post('update-comment/{id}', [CommentController::class, 'update'])
-        ->name('update-comment');
-
     Route::post('delete-comment/{id}', [CommentController::class, 'destroy'])
         ->name('delete-comment');
 });

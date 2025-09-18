@@ -31,18 +31,6 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
         setReplyingTo(comment);
     }
 
-    const addReply = (comments: any[], parentId: number, reply: any): any[] => {
-        return comments.map(c => {
-            if(c.id === parentId) {
-                return { ...c, replies: [...c.replies, reply] };
-            }
-            if(c.replies && c.replies.length > 0) {
-                return { ...c, replies: addReply(c.replies, parentId, reply) };
-            }
-            return c;
-        });
-    };
-
     const submitComment = (content: string, replyingTo: any) => {
         const data = {
             content,
@@ -50,29 +38,63 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
             post_id: post.id,
         };
 
+        const addReplyRecursive = (commentsForSearch: any[], targetCommentId: number, reply: any): any[] => {
+            return commentsForSearch.map(c => {
+                // is this a target comment?
+                if (c.id === targetCommentId) {
+                    return {
+                        ...c,
+                        replies: [...c.replies, reply] // push reply
+                    };
+                }
+
+                // if not, check its replies recursively
+                if (c.replies && c.replies.length > 0) {
+                    return {
+                        ...c,
+                        replies: addReplyRecursive(c.replies, targetCommentId, reply)
+                    };
+                }
+
+                return c;
+            });
+        };
+
         axios.post('/submit-comment', data)
         .then(r => {
-            // update posts context, take care of parent and child comments too
             const comment = r.data.comment;
-            console.log(comment);
 
-            if(comment.parent_id) {
+            // if reply
+            if (comment.parent_id) {
                 const updatedPosts = posts.map((p:any) => {
-                    if(p.id === post.id) {
-                        return { ...p, comments: addReply(p.comments, comment.parent_id, comment) }
+                    // find the post
+                    if (p.id === post.id) {
+                        return {
+                            ...p,
+                            comments: addReplyRecursive(p.comments, comment.parent_id, comment) // add reply recursively
+                        };
                     }
+
                     return p;
                 });
+
                 setPosts(updatedPosts);
             } else {
                 const updatedPosts = posts.map((p:any) => {
-                    if(p.id === post.id) {
-                        return { ...p, comments: [...p.comments, comment] }
+                    // find the post
+                    if (p.id === post.id) {
+                        return {
+                            ...p,
+                            comments: [...p.comments, comment]  // push new comment
+                        };
                     }
+
                     return p;
                 });
+
                 setPosts(updatedPosts);
             }
+
             
             toast.success("Comment submitted successfully");
             
@@ -81,6 +103,38 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
         })
         .catch(e => {
             toast.error("Error submitting comment: " + e.response.data.error);
+        });
+    }
+
+    const deleteComment = (commentId: number) => {
+        axios.post(`/delete-comment/${commentId}`)
+        .then(r => {
+            const removeCommentRecursive = (commentsForSearch: any[], targetCommentId: number): any[] => {
+                return commentsForSearch
+                    .filter(c => c.id !== targetCommentId) // remove target comment
+                    .map(c => ({
+                        ...c,
+                        replies: c.replies ? removeCommentRecursive(c.replies, targetCommentId) : [] // check replies recursively
+                    }));
+            };
+
+            const updatedPosts = posts.map((p:any) => {
+                // find the post
+                if (p.id === post.id) {
+                    return {
+                        ...p,
+                        comments: removeCommentRecursive(p.comments, commentId) // remove comment recursively
+                    };
+                }
+
+                return p;
+            });
+
+            setPosts(updatedPosts);
+            toast.success("Comment deleted successfully");
+        })
+        .catch(e => {
+            toast.error("Error deleting comment: " + e.response.data.error);
         });
     }
 
@@ -153,6 +207,7 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
                         key={comment.id}
                         comment={comment}
                         onReply={handleReply}
+                        onDelete={deleteComment}
                     />
                 ))
             )}
