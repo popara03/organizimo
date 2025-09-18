@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\admin\GroupController;
 use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
@@ -38,6 +39,16 @@ Route::middleware('auth')->group(function(){
 
     Route::post('filter-posts', [PostController::class, 'filterPosts'])
         ->name('filter-posts');
+
+    // comments
+    Route::post('submit-comment', [CommentController::class, 'store'])
+        ->name('submit-comment');
+
+    Route::post('update-comment/{id}', [CommentController::class, 'update'])
+        ->name('update-comment');
+
+    Route::post('delete-comment/{id}', [CommentController::class, 'destroy'])
+        ->name('delete-comment');
 });
 
 // Admin dashboard endpoints

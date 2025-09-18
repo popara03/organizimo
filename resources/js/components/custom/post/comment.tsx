@@ -30,7 +30,7 @@ const Comment = ({ comment, onReply, depth = 0, parentAuthorName } : { comment: 
                 <p className='font-semibold'>{comment.author.name}</p>
 
                 <p className='text-xs text-gray-500'>
-                    {new Date(comment.created_at).toLocaleString("en-US", {
+                    {new Date(comment.created_at?.replace(" ", "T")).toLocaleString("en-US", {
                         day: "2-digit",
                         month: "2-digit",
                         year: "numeric",

@@ -13,6 +13,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { PostsContext } from '@/providers/postsProvider';
 import axios from 'axios';
+import { toast } from 'sonner';
+import { set } from 'date-fns';
 
 type PostPreviewModalProps = {
     isOpen: boolean;
@@ -22,38 +24,44 @@ type PostPreviewModalProps = {
 }
 
 const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : PostPreviewModalProps) => {
-    const { posts } = useContext(PostsContext);
-
-    const [newComment, setNewComment] = useState("");
+    const { posts, setPosts } = useContext(PostsContext);
+    const [newComment, setNewComment] = useState<string>("");
 
     const [replyingTo, setReplyingTo] = useState<any>(null);
     const handleReply = (comment:any) => {
         setReplyingTo(comment);
     }
 
-    const submitComment = (newComment: string, replyingTo: any) => {
-        console.log("Submitting comment");
-
+    const submitComment = (content: string, replyingTo: any) => {
         const data = {
-            newComment,
-            replyingTo,
-            post,
+            content,
+            parent_id: replyingTo?.id || null,
+            post_id: post.id,
         };
 
         axios.post('/submit-comment', data)
         .then(r => {
-            console.log("Comment submitted successfully");
-            // update posts state with new comment
-            const updatedPost = r.data.post;
-            const updatedPosts = posts.map((p:any) => {
-                if(p.id === updatedPost.id){
-                    return updatedPost;
+            // update posts context, take care of parent and child comments too
+            const comment = r.data.comment;
+            const updatedPosts = posts.map((p: any) => {
+                if (p.id === post.id) {
+                    return {
+                        ...p,
+                        comments: [comment, ...p.comments]
+                    };
                 }
                 return p;
             });
+
+            setPosts(updatedPosts);
+            
+            toast.success("Comment submitted successfully");
+            
+            setNewComment("");
+            setReplyingTo(null);
         })
         .catch(e => {
-            console.error("Error submitting comment", e);
+            toast.error("Error submitting comment: " + e.response.data.error);
         });
     }
 
@@ -109,8 +117,6 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
                     className='!p-0'
                     onClick={() => {
                         submitComment(newComment, replyingTo);
-                        setNewComment("");
-                        setReplyingTo(null);
                     }}
                     disabled={newComment.trim() === ""}
                     >
