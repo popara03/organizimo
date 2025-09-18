@@ -28,7 +28,7 @@ export type PostComment = {
     replies?: PostComment[];
 }
 
-const Comment = ({ comment, onReply, onDelete, depth = 0, parentAuthorName } : { comment: PostComment, onReply: (comment: PostComment) => void, onDelete: (commentId: number) => void, depth?: number, parentAuthorName?: string } ) => {
+const Comment = ({ comment, onReply, onDelete, isPostActive, depth = 0, parentAuthorName } : { comment: PostComment, onReply: (comment: PostComment) => void, onDelete: (commentId: number) => void, isPostActive: boolean, depth?: number, parentAuthorName?: string } ) => {
     const activeUser:any = usePage().props.active_user;
 
     return (
@@ -58,14 +58,17 @@ const Comment = ({ comment, onReply, onDelete, depth = 0, parentAuthorName } : {
         </div>
         
         <div className='flex items-center gap-4'>
-          <Button 
-          variant={'ghost'} 
-          className='p-0 font-bold'
-          onClick={() => {
-              onReply(comment);
-          }}>
-              Reply
-          </Button>
+          {/* reply button */}
+          { Boolean(isPostActive) &&
+              <Button 
+              variant={'ghost'} 
+              className='p-0 font-bold'
+              onClick={() => {
+                  onReply(comment);
+              }}>
+                  Reply
+              </Button>
+          }
 
           {/* comment options */}
           <div className={`w-full sm:w-fit h-full flex items-center justify-around sm:justify-start gap-4 border-b sm:border-none border-secondary/10 pb-2 sm:pb-0`}>
@@ -137,6 +140,7 @@ const Comment = ({ comment, onReply, onDelete, depth = 0, parentAuthorName } : {
             comment={reply}
             onReply={onReply}
             onDelete={onDelete}
+            isPostActive={isPostActive}
             depth={depth + 1}
             parentAuthorName={comment.author.name}
             />

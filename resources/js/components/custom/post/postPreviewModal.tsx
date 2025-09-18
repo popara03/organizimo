@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 
 import {
   Dialog,
@@ -27,9 +27,14 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
     const [newComment, setNewComment] = useState<string>("");
 
     const [replyingTo, setReplyingTo] = useState<any>(null);
+
     const handleReply = (comment:any) => {
         setReplyingTo(comment);
     }
+
+    // scroll to input when replying
+    const inputRef = useRef<HTMLInputElement>(null);
+    const dialogContentRef = useRef<HTMLDivElement>(null);
 
     const submitComment = (content: string, replyingTo: any) => {
         const data = {
@@ -143,7 +148,7 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
     open={isOpen}
     onOpenChange={togglePreview}
     >
-      <DialogContent hideClose className='w-full h-full max-w-11/12 max-h-10/12 md:max-h-11/12 p-0 flex flex-col gap-0 bg-primary overflow-y-auto scrollbar'>
+      <DialogContent ref={dialogContentRef} hideClose className='w-full h-full max-w-11/12 max-h-10/12 md:max-h-11/12 p-0 flex flex-col gap-0 bg-primary overflow-y-auto scrollbar'>
         <DialogTitle className='hidden'>
             <DialogDescription></DialogDescription>
         </DialogTitle>
@@ -179,6 +184,7 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
                     submitComment(newComment, replyingTo);
                 }}>
                     <Input
+                    ref={inputRef}
                     placeholder="Write a comment"
                     className="
                     p-0
@@ -208,6 +214,7 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
                         comment={comment}
                         onReply={handleReply}
                         onDelete={deleteComment}
+                        isPostActive={post.status}
                     />
                 ))
             )}
