@@ -125,7 +125,7 @@ const PostCreateModal = ({isOpen, onOpenChange, postForEdit, groups, activeGroup
             onOpenChange(false);
         }, onError: (errors) => {
             setErrors(errors);
-            toast.error("Error submitting the form." + JSON.stringify(errors));
+            toast.error("Error submitting the form.");
         },
         onFinish: () => {
             setProcessing(false);
@@ -146,7 +146,7 @@ const PostCreateModal = ({isOpen, onOpenChange, postForEdit, groups, activeGroup
             onOpenChange(false);
         }, onError: (errors) => {
             setErrors(errors);
-            toast.error("Error submitting the form." + JSON.stringify(errors));
+            toast.error("Error submitting the form.");
         },
         onFinish: () => {
             setProcessing(false);

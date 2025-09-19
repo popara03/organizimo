@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 
 export default function Welcome() {
     return (
-        <div className="relative w-full flex gap-8 flex-col justify-between overflow-hidden">
+        <div className="relative w-full flex-1 flex flex-col justify-between overflow-hidden">
             <div className="px-4 flex flex-col gap-4">
                 <h1 className="!text-5xl sm:!text-6xl md:!text-8xl">
                     <b>Share. Connect. Solve.</b>
@@ -31,20 +31,22 @@ export default function Welcome() {
             </div>
 
             {/* animated line */}
-            <div className="w-full mt-auto flex scrolling">
-                <div className="min-w-full flex bg-red-300">
-                    <div className="min-w-1/5 min-h-8 bg-accent-lime"></div>
-                    <div className="min-w-1/5 min-h-8 bg-accent-orange"></div>
-                    <div className="min-w-1/5 min-h-8 bg-accent-red"></div>
-                    <div className="min-w-1/5 min-h-8 bg-accent-purple"></div>
-                    <div className="min-w-1/5 min-h-8 bg-accent-blue"></div>
-                </div>
-                <div className="min-w-full flex bg-red-300">
-                    <div className="min-w-1/5 min-h-8 bg-accent-lime "></div>
-                    <div className="min-w-1/5 min-h-8 bg-accent-orange"></div>
-                    <div className="min-w-1/5 min-h-8 bg-accent-red"></div>
-                    <div className="min-w-1/5 min-h-8 bg-accent-purple"></div>
-                    <div className="min-w-1/5 min-h-8 bg-accent-blue"></div>
+            <div className="w-full flex-1 flex justify-center items-center">
+                <div className="w-full flex scrolling">
+                    <div className="min-w-full flex bg-red-300">
+                        <div className="min-w-1/5 min-h-8 bg-accent-lime"></div>
+                        <div className="min-w-1/5 min-h-8 bg-accent-orange"></div>
+                        <div className="min-w-1/5 min-h-8 bg-accent-red"></div>
+                        <div className="min-w-1/5 min-h-8 bg-accent-purple"></div>
+                        <div className="min-w-1/5 min-h-8 bg-accent-blue"></div>
+                    </div>
+                    <div className="min-w-full flex bg-red-300">
+                        <div className="min-w-1/5 min-h-8 bg-accent-lime "></div>
+                        <div className="min-w-1/5 min-h-8 bg-accent-orange"></div>
+                        <div className="min-w-1/5 min-h-8 bg-accent-red"></div>
+                        <div className="min-w-1/5 min-h-8 bg-accent-purple"></div>
+                        <div className="min-w-1/5 min-h-8 bg-accent-blue"></div>
+                    </div>
                 </div>
             </div>
         </div>
