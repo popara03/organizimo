@@ -13,9 +13,13 @@ import { Upload, X } from "lucide-react";
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
 
+export interface ExtendedFile extends File {
+  existingId?: number;
+}
+
 interface FileUploadProps {
-    files: File[],
-    setFiles: (files: File[]) => void,
+    files: ExtendedFile[],
+    setFiles: (files: ExtendedFile[]) => void,
     maxFiles?: number,
     maxFileSize?: number,
     allowMultiple?: boolean,
@@ -29,8 +33,7 @@ const FileUploader = ({files, setFiles, maxFiles = 1, maxFileSize = 2 * 1024 * 1
         allowedFileTypes.push('.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt', '.json', '.csv', '.zip', '.rar');
     }
 
-    const onFileValidate = useCallback(
-        (file: File): string | null => {
+    const onFileValidate = useCallback((file: ExtendedFile): string | null => {
             // Validate file duplication
             if (files.some((f) => (f.name === file.name && f.size === file.size))) {
                 return "This file is already uploaded.";
@@ -55,13 +58,16 @@ const FileUploader = ({files, setFiles, maxFiles = 1, maxFileSize = 2 * 1024 * 1
             return null;
         }, [files],
     );
-    const onFileReject = useCallback((file: File, message: string) => {
+
+    const onFileReject = useCallback((file: ExtendedFile, message: string) => {
         toast.error(message);
     }, []);
-    const handleFileRemove = (file: File) => {
+
+    const handleFileRemove = (file: ExtendedFile) => {
         const newFiles = files.filter(f => f !== file);
         setFiles(newFiles);
     };
+
     return (
         <FileUpload
         value={files}
@@ -90,8 +96,8 @@ const FileUploader = ({files, setFiles, maxFiles = 1, maxFileSize = 2 * 1024 * 1
 
             {/* uploaded files */}
             <FileUploadList>
-                {files.map((file) => (
-                <FileUploadItem key={file.name} value={file}>
+                {files.map((file, index) => (
+                <FileUploadItem key={index} value={file}>
                     <FileUploadItemPreview />
                     <FileUploadItemMetadata className='w-2' />
                     <FileUploadItemDelete onClick={() => handleFileRemove(file)} asChild>

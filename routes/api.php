@@ -22,7 +22,7 @@ Route::middleware('auth')->group(function(){
     Route::post('create-post', [PostController::class, 'store'])
         ->name('create-post');
 
-    Route::post('update-post', [PostController::class, 'update'])
+    Route::post('update-post', [PostController::class, 'edit'])
         ->name('update-post');
 
     Route::post('change-post-status/{id}', [PostController::class, 'changeStatus'])

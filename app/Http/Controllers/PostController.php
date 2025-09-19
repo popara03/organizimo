@@ -138,53 +138,93 @@ class PostController extends Controller
             ])->with('success', 'Post created successfully.');
         } catch (Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Failed to create post. '.$e->getMessage()]);
+            return back()->withErrors(['error' => $e->getMessage()]);
         }
     }
 
     public function edit(Request $request ){
-        $request->validate([
-            'title' => 'required|string|min:3|max:255',
-            'content' => 'required|string|min:10',
-            'files' => 'array|max:5',
-            'files.*' => 'file|mimes:jpg,jpeg,png,webp,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,json,csv,zip,rar|max:2048',
-        ]);
+        try{
+            $request->validate([
+                'title' => 'required|string|min:3|max:255',
+                'content' => 'required|string|min:10',
+                'files' => 'array|max:5',
+                'files.*' => 'file|mimes:jpg,jpeg,png,webp,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,json,csv,zip,rar|max:2048',
+                'existingFiles' => 'array',
+                'existingFiles.*.attachment_id' => 'nullable|integer|exists:attachments,id',
+            ]);
 
-        // id check
-        if(!$request->post_id || !is_numeric($request->post_id)){
-            return back()->withErrors(['error' => 'Invalid post ID.']);
-        }
-
-        // find post
-        $post = Post::find($request->post_id);
-        if (!$post) {
-            return back()->withErrors(['error' => 'Post not found.']);
-        }
-
-        // check if the authenticated user is the owner of the post or admin
-        if ($post->user_id !== Auth::id() && Auth::user()->role->name !== 'admin') {
-            return back()->withErrors(['error' => 'You are not authorized to edit this post.']);
-        }
-
-        // update post
-        $post->update([
-            'title' => $request->title,
-            'content' => $request->content,
-        ]);
-
-        if ($request->hasFile('files')) {
-            foreach ($request->file('files') as $file) {
-                $path = $file->store('posts', 'public');
-
-                $post->attachments()->create([
-                    'name' => $file->getClientOriginalName(),
-                    'type' => str_contains($file->getClientMimeType(), 'image') ? 'image' : 'document',
-                    'path' => $path,
-                ]);
+            // id check
+            if(!$request->id || !is_numeric($request->id)){
+                return back()->withErrors(['error' => 'Invalid post ID.']);
             }
-        }
 
-        return redirect()->route('posts.index')->with('success', 'Post updated successfully.');
+            // find post
+            $post = Post::find($request->id);
+            if (!$post) {
+                return response()->json(['error' => 'Post not found.'], 404);
+            }
+
+            // check if the authenticated user is the owner of the post or admin
+            if ($post->user_id !== Auth::id() && Auth::user()->role->name !== 'admin') {
+                return response()->json(['error' => 'You are not authorized to edit this post.'], 403);
+            }
+
+            // update post
+            $post->update([
+                'title' => $request->title,
+                'content' => $request->content,
+            ]);
+
+            // handle attachments
+            $existingFiles = $request->existingFiles ?? [];
+            $files = $request->file('files') ?? [];
+
+            // existing attachments_ids that are kept
+            $keepIds = collect($existingFiles)
+            ->pluck('attachment_id')
+            ->filter()
+            ->toArray();
+
+            // attachments in db that are not in the keepIds, means they are removed by user - delete them
+            $post->attachments()
+            ->whereNotIn('id', $keepIds)
+            ->each(function ($attachment) {
+                Storage::disk('public')->delete($attachment->path);
+                $attachment->delete();
+            });
+
+            // new files are the ones in $files that do not have corresponding attachment_id in existingFiles
+            foreach ($existingFiles as $index => $fileMeta) {
+                $attachmentId = $fileMeta['attachment_id'] ?? null;
+
+                // ako je attachment_id null, a postoji fajl na istoj poziciji u $files, to je novi fajl
+                if (is_null($attachmentId) && isset($files[$index]) && $files[$index]) {
+                    $newFile = $files[$index];
+                    $path = $newFile->store('posts', 'public');
+
+                    $post->attachments()->create([
+                        'name' => $newFile->getClientOriginalName(),
+                        'type' => str_contains($newFile->getClientMimeType(), 'image') ? 'image' : 'document',
+                        'path' => $path,
+                    ]);
+                }
+            }
+
+            return Inertia::render('dashboard', [
+                'groups' => Group::with('users')
+                ->where('is_ffa', true)
+                ->orWhereHas('users', function ($q) {
+                    $q->where('users.id', Auth::id());
+                })
+                ->get(),
+                'users' => User::all(),
+                'updated_post' => $this->formatPost($post->load(['group', 'user', 'attachments', 'savedByUsers', 'followedByUsers', 'comments', 'comments.user', 'comments.childrenRecursive'])),
+            ])->with('success', 'Post updated successfully.');
+
+            // return response()->json(['success' => 'Post updated successfully.', 'new_post' => $post], 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     public function changeStatus(int $id, Request $request){
