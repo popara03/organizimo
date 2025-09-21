@@ -4,7 +4,7 @@ A full-stack web application built with React (frontend) and Laravel 12 (backend
 
 # Overview
 
-Users can register, edit their profiles, and access sectors relevant to their department. Within each sector, users can publish posts (including title, text, images, and file attachments), engage in discussions, save posts, and follow topics of interest. Admins can manage sectors, users, and posts.
+Users can register, edit their profiles, and access sectors relevant to their department. Within each sector, users can publish posts (including title, text, images, and file attachments), engage in discussions, save posts, and follow topics of interest. While admins can manage sectors, users, and posts.
 
 A robust search and filtering system ensures quick retrieval of relevant content, helping teams save time and focus on real work.
 
