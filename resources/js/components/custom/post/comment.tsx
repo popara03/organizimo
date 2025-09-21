@@ -37,9 +37,9 @@ const Comment = ({ comment, onReply, onDelete, isPostActive, depth = 0, parentAu
       <div className='flex items-start justify-between'>
         <div className="flex items-center gap-2">
             { comment.author.image ?
-                <img src={'/storage/'+comment.author.image} alt={comment.author.name} className="size-9 rounded-full" />
+                <img src={'/storage/'+comment.author.image} alt={comment.author.name} className="w-10 h-10 flex-shrink-0 rounded-full object-cover" />
             :
-                <img src="/icons/user.svg" alt={comment.author.name} className="size-9 rounded-full bg-accent-lime"/>
+                <img src="/icons/user.svg" alt={comment.author.name} className="w-10 h-10 flex-shrink-0 rounded-full object-cover bg-accent-lime"/>
             }
 
             <div className='flex flex-col'>
