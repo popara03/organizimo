@@ -11,11 +11,11 @@ A robust search and filtering system ensures quick retrieval of relevant content
 # Key Features
 
 ### Post creation
-- Title, rich-text/Markdown content, links, embedded images, and attachments (PDF, DOCX, ZIP, etc.)  
-- Tags and sector assignment for better organization  
+- Title, text content, images, and attachments (PDF, DOCX, ZIP, etc.)  
+- Tags and sector assignment for better organization
 
 ### Post interaction
-- Comments
+- Commenting
 - Saving post  
 - Subscription to posts — users can follow topics and receive updates (notification delivery system prepared at the prototype level)  
 
