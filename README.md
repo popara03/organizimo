@@ -47,6 +47,7 @@ A robust search and filtering system ensures quick retrieval of relevant content
 - **Tailwind CSS**
 - **Laravel 12**
 - **MySQL**
+
 - **Libraries**
   - **Axios**
   - **ShadCDN**
