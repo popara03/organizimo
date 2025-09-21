@@ -57,7 +57,13 @@ function DashboardContent() {
 
     // other data
     const {props} : any = usePage();
-    const groups = props.groups;
+
+    // flag to show all groups for admin, passed to sidebar (rendering flag) and filtering function
+    const [showAllGroups, setShowAllGroups] = useState<boolean>(
+        localStorage.getItem('showAllGroups') === 'true' ? true : false
+    );
+    const groups = showAllGroups ? props.allGroups : props.groups;
+
     const [users, setUsers] = useState<any[]>(props.users);
 
     // filters
@@ -80,6 +86,7 @@ function DashboardContent() {
     // filter data object
     const [filterData, setFilterData] = useState<any>({
         group: activeGroupId,
+        showAllGroups,
         personalization,
         keyword,
         startDate,
@@ -87,9 +94,11 @@ function DashboardContent() {
         status,
         selectedUsers,
     });
+
     useEffect(() => {
         const newFilterData = {
             group: activeGroupId,
+            showAllGroups,
             personalization,
             keyword,
             startDate,
@@ -98,7 +107,7 @@ function DashboardContent() {
             selectedUsers,
         };
         handleFiltering(newFilterData);
-    }, [activeGroupId, personalization, keyword, startDate, endDate, status, selectedUsers]);
+    }, [groups, activeGroupId, personalization, keyword, startDate, endDate, status, selectedUsers]);
 
     const handleFiltering = (filterData:any) => {
         axios.post('filter-posts', filterData)
@@ -128,7 +137,7 @@ function DashboardContent() {
     <div className="flex-1 px-4 ps-12 flex flex-col">
         <Head title="Dashboard" />
 
-        <Sidebar data={groups} groupState={activeGroupId} setGroupState={setActiveGroup} />
+        <Sidebar data={groups} setGroupState={setActiveGroup} showAllGroups={showAllGroups} setShowAllGroups={setShowAllGroups} />
 
         {/* filters */}
         <div className="w-full pb-8 flex flex-col items-center gap-8 border-b border-primary/10">

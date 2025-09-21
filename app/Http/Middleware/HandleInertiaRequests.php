@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Group;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
@@ -36,12 +38,25 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        // authenticated user with role relation
+        $active_user = Auth::user() ? Auth::user() : null;
+        if ($active_user && $active_user instanceof User) {
+            $active_user->load('role');
+        }
+
+        // if admin, load all groups
+        $allGroups = [];
+        if( $active_user && $active_user instanceof User && $active_user->role?->name === 'admin' ) {
+            $allGroups = Group::all();
+        }
+
         return [
             ...parent::share($request),
             //app name
             'name' => config('app.name'),
             // authenticated user data
-            'active_user' => Auth::user() ? Auth::user() : null,
+            'active_user' => $active_user,
+            'allGroups' => $allGroups,
         ];
     }
 }

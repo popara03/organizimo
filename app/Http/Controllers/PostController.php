@@ -51,6 +51,10 @@ class PostController extends Controller
         ];
     }
 
+    // treba jedna helper funkcija za fetch grupa, da razdvaja kad se uzimaju svi a kad samo FFA i one gde je user clan
+    // i onda se ta funkcija koristi u index i za svaki return u metodama (u filtering je malo specificno jer se radi query build)
+    // private function getGroups(){}
+
     public function index(){
         $groups = Group::with('users')
         ->where('is_ffa', true)
@@ -362,15 +366,23 @@ class PostController extends Controller
             }
         ]);
 
-        $query->where(function ($q) {
-            $groups = Group::with('users')
-            ->where('is_ffa', true)
-            ->orWhereHas('users', function ($q) {
-                $q->where('users.id', Auth::id());
-            })
-            ->get();
-            $q->whereIn('group_id', $groups->pluck('id'));
-        });
+        // if admin make the starting groups query load all groups, otherwise load only FFA or groups where user is a member
+        if(Auth::user()->role->name === 'admin' && $request->showAllGroups){
+            $query->where(function ($q) {
+                $q->whereIn('group_id', Group::all()->pluck('id'));
+            });
+        } else {
+            $query->where(function ($q) {
+                $groups = Group::with('users')
+                ->where('is_ffa', true)
+                ->orWhereHas('users', function ($q) {
+                    $q->where('users.id', Auth::id());
+                })
+                ->get();
+
+                $q->whereIn('group_id', $groups->pluck('id'));
+            });
+        }
 
         // group
         if($request->has('group') && is_numeric($request->group)){
