@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
+import Footer from '@/components/custom/fixed/footer';
 
 export default function Welcome() {
     return (
@@ -31,7 +32,7 @@ export default function Welcome() {
             </div>
 
             {/* animated line */}
-            <div className="w-full flex-1 flex justify-center items-center">
+            <div className="w-full py-12 flex-1 flex justify-center items-center">
                 <div className="w-full flex scrolling">
                     <div className="min-w-full flex bg-red-300">
                         <div className="min-w-1/5 min-h-8 bg-accent-lime"></div>
@@ -49,6 +50,8 @@ export default function Welcome() {
                     </div>
                 </div>
             </div>
+
+            <Footer />
         </div>
     );
 }

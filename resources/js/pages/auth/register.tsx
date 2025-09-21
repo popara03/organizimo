@@ -10,12 +10,14 @@ import InputError from '@/components/input-error';
 
 import FileUploader from '@/components/custom/fileUploader';
 import { toast } from "sonner";
+import Footer from '@/components/custom/fixed/footer';
 
 export default function Register() {
     // File upload
     const [files, setFiles] = useState<File[]>([]);
 
     return (
+    <>
     <AuthLayout title="Register" description="Enter your details below to create your account.">
         
         <Head title="Register" />
@@ -131,5 +133,8 @@ export default function Register() {
             )}
         </Form>
     </AuthLayout>
+    
+    <Footer />
+    </>
 );
 }

@@ -1,3 +1,4 @@
+import Footer from '@/components/custom/fixed/footer';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +14,7 @@ interface LoginProps {
 
 export default function Login({ status, canResetPassword }: LoginProps) {
     return (
+        <>
         <AuthLayout title="Log in" description="Enter your credentials below to log in.">
             <Head title="Log in" />
 
@@ -84,6 +86,10 @@ export default function Login({ status, canResetPassword }: LoginProps) {
             </Form>
 
             {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
+
         </AuthLayout>
+
+        <Footer />
+        </>
     );
 }

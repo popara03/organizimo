@@ -344,14 +344,16 @@ function DashboardContent() {
         />
 
         {/* create post button */}
-        <Button
-        className="z-10 fixed bottom-4 right-4 size-16 rounded-full bg-accent-blue flex justify-center items-center"
-        onClick={openModalForCreate}
-        >
-            <svg className='size-6' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M23 11V13H22V14H14V22H13V23H11V22H10V14H2V13H1V11H2V10H10V2H11V1H13V2H14V10H22V11H23Z" fill="white"/>
-            </svg>
-        </Button>
+        <div className="z-10 fixed bottom-0 right-0 size-28 flex justify-end items-end p-4 bg-primary rounded-tl-full border-t-2 border-accent-blue">
+            <Button
+            className="size-14 rounded-full bg-accent-blue border-2 drop-shadow-2xl flex justify-center items-center"
+            onClick={openModalForCreate}
+            >
+                <svg className='size-6' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M23 11V13H22V14H14V22H13V23H11V22H10V14H2V13H1V11H2V10H10V2H11V1H13V2H14V10H22V11H23Z" fill="white"/>
+                </svg>
+            </Button>
+        </div>
     </div>
     );
 }

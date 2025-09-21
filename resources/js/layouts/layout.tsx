@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Nav />
             </NotificationProvider>
 
-            <main className="min-h-[calc(100vh-60px)] py-8 flex flex-col">
+            <main className="min-h-[calc(100vh-60px)] pt-8 flex flex-col">
                 {children}
             </main>
         </>
