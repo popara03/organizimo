@@ -37,7 +37,7 @@ const NotificationProvider = ({ children }: { children: ReactNode }) => {
         // TODO: Make API call to mark notification as read
 
         // Update local state instead of re-fetching
-        let n  = notifications.find((n) => n.id === id);
+        const n  = notifications.find((n) => n.id === id);
         
         if(n){
             n.is_read = !n.is_read;

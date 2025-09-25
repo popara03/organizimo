@@ -1,4 +1,4 @@
-import { Form, useForm } from '@inertiajs/react'
+import { Form } from '@inertiajs/react'
 import {Label} from '@/components/ui/label'
 import {Input} from '@/components/ui/input'
 import InputError from '@/components/input-error'
@@ -14,7 +14,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 
 import FileUploader from "@/components/custom/fileUploader";

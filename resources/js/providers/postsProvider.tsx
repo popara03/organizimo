@@ -1,7 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import axios from 'axios';
-import React, { createContext, useEffect, useState } from 'react'
-import { flushSync } from 'react-dom';
+import React, { createContext, useState } from 'react'
 import { toast } from 'sonner';
 
 export const PostsContext = createContext<any>(null);
@@ -62,7 +61,7 @@ const PostsProvider = ({ children } : { children: React.ReactNode }) => {
         });
     }
 
-    const followPost = (postId: number, isFollowing: boolean) => {
+    const followPost = (postId: number) => {
         axios.post('/follow-post/'+postId)
         .then(r => {
             const { is_following } = r.data;

@@ -1,15 +1,14 @@
 import AuthLayout from '@/layouts/auth-layout';
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { Form, Head, Link } from '@inertiajs/react';
-import { LoaderCircle, Upload, X } from 'lucide-react';
+import { LoaderCircle} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import InputError from '@/components/input-error';
 
 import FileUploader from '@/components/custom/fileUploader';
-import { toast } from "sonner";
 import Footer from '@/components/custom/fixed/footer';
 
 export default function Register() {

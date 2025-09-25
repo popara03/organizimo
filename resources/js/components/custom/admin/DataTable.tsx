@@ -80,7 +80,7 @@ export function DataTable<TData, TValue>({columns, data, searchableColumnIdentif
 
         <TableBody className="bg-primary">
             {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row, index) => (
+            table.getRowModel().rows.map((row) => (
                 <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
