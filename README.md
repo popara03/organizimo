@@ -50,5 +50,5 @@ A robust search and filtering system ensures quick retrieval of relevant content
 
 - **Libraries**
   - **Axios**
-  - **ShadCDN**
+  - **Shadcn**
   - **Sonner**
