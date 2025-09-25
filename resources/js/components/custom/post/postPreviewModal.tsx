@@ -113,7 +113,7 @@ const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : Po
 
     const deleteComment = (commentId: number) => {
         axios.post(`/delete-comment/${commentId}`)
-        .then(r => {
+        .then(() => {
             const removeCommentRecursive = (commentsForSearch: any[], targetCommentId: number): any[] => {
                 return commentsForSearch
                     .filter(c => c.id !== targetCommentId) // remove target comment

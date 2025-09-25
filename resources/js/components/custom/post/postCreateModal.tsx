@@ -20,7 +20,7 @@ import {
 
 import FileUploader from "@/components/custom/fileUploader";
 
-import { Form, router } from '@inertiajs/react'
+import { router } from '@inertiajs/react'
 import {Label} from '@/components/ui/label'
 import {Input} from '@/components/ui/input'
 import {Textarea} from '@/components/ui/textarea'

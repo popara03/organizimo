@@ -63,7 +63,7 @@ const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDT
 
     // post preview
     const [isPreviewOpen, setIsPreviewOpen] = useState<boolean>(false);
-    const openPreview = (post:any) => {
+    const openPreview = () => {
         setIsPreviewOpen(!isPreviewOpen);
     }
 

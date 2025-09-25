@@ -9,7 +9,7 @@ import AdminLayout from '@/layouts/admin/adminLayout'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/custom/admin/DataTable'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal, Clipboard } from 'lucide-react'
 import GroupModal from '@/components/custom/admin/UserModal'
 

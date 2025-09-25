@@ -84,7 +84,7 @@ const PostsProvider = ({ children } : { children: React.ReactNode }) => {
         }
 
         axios.post(`/change-post-status/${postId}`, { status: isActive })
-        .then(r => {
+        .then(() => {
             toast.success('Post status updated successfully.');
 
             setPosts(() => {
@@ -100,7 +100,7 @@ const PostsProvider = ({ children } : { children: React.ReactNode }) => {
 
     const deletePost = (id:number) => {
         axios.delete(`/delete-post/${id}`)
-        .then(data => {
+        .then(() => {
             setPosts(posts.filter((post: any) => post.id !== id));
             toast.success('Post deleted successfully.');
         })
