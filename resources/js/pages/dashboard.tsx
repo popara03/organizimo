@@ -83,6 +83,8 @@ function DashboardContent() {
 
     const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
+    const [processing, setProcessing] = useState<boolean>(false);
+
     // filter data object
     const [filterData, setFilterData] = useState<any>({
         group: activeGroupId,
@@ -110,6 +112,8 @@ function DashboardContent() {
     }, [groups, activeGroupId, personalization, keyword, startDate, endDate, status, selectedUsers]);
 
     const handleFiltering = (filterData:any) => {
+        setProcessing(true);
+        
         axios.post('filter-posts', filterData)
         .then(response => {
             setPosts(response.data.posts);
@@ -117,6 +121,9 @@ function DashboardContent() {
         })
         .catch(e => {
             console.error('There was an error!', e.response?.data?.error);
+        })
+        .finally(() => {
+            setProcessing(false);
         });
     }
 
@@ -331,12 +338,13 @@ function DashboardContent() {
         </div>
 
         {/* posts */}
-        <div className="w-full py-8 flex flex-wrap gap-4">
+        <div className={`relative w-full py-8 flex flex-wrap gap-4 ${processing && ''}`}>
             {posts.length > 0 ? posts.map((post:any, index:number) => (
                 <Post 
                 key={index} 
                 post={post} 
                 openModalForEdit={openModalForEdit}
+                className={`${processing && 'blur-xs'}`}
                 />
             )) : (
                 <p className='mx-auto text-primary text-base font-bold'>No posts found. 🥱</p>
