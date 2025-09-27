@@ -41,14 +41,63 @@ A robust search and filtering system ensures quick retrieval of relevant content
 - Clean, modern, and intuitive interface optimized for both desktop and mobile devices  
 
 # Technologies used:
-- **React 19**
-- **TypeScript**
-- **Inertia.js**
-- **Tailwind CSS**
-- **Laravel 12**
-- **MySQL**
+- React 19
+- TypeScript
+- Inertia.js
+- Tailwind CSS
+- Laravel 12
+- MySQL
 
 - **Libraries**
-  - **Axios**
-  - **Shadcn**
-  - **Sonner**
+  - Axios
+  - Shadcn
+  - Sonner
+
+# Requirements
+- PHP 8.2+
+- Composer
+- Node.js + npm
+- MySQL (or other compatible databases)
+
+# Installation
+Clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/popara03/organizimo.git
+cd organizimo
+
+# Install PHP dependencies
+composer install
+
+# Install Node.js dependencies
+npm install
+```
+
+## Setup .env file
+Copy the example environment file and adjust the settings:
+```bash
+cp .env.example .env
+```
+Make sure to configure your database in .env:
+```bash
+DB_DATABASE=organizimo
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+## Database setup
+Run the migrations and seeders to prepare the database:
+```bash
+php artisan migrate --seed
+```
+
+## Running the application
+Use the Composer script that runs backend (Laravel), frontend (Vite), and queue worker together:
+```bash
+composer dev
+```
+Run Laravel and Vite in separate terminals:
+```bash
+php artisan serve
+npm run dev
+```
