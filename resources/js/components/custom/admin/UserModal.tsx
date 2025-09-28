@@ -75,9 +75,10 @@ const GroupModal = ({isOpen, onIsOpenChange, roles, userForEdit, onCreate, onUpd
                     return finalData;
                 }}
                 onSuccess={(response:any) => {
-                    console.log(response);
-                    toast.success(userForEdit ? 'User updated successfully.' : 'User created successfully.');
                     {userForEdit ? onUpdate(response.props.user) : onCreate(response.props.user)}
+
+                    onIsOpenChange(false);
+                    toast.success(userForEdit ? 'User updated successfully.' : 'User created successfully.');
                 }}
                 onError={() => {
                     toast.error('Failed to save user.');

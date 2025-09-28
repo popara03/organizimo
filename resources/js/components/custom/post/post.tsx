@@ -63,8 +63,8 @@ const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDT
 
     // post preview
     const [isPreviewOpen, setIsPreviewOpen] = useState<boolean>(false);
-    const openPreview = () => {
-        setIsPreviewOpen(!isPreviewOpen);
+    const togglePreview = (value?: boolean) => {
+        setIsPreviewOpen(value !== undefined ? value : !isPreviewOpen);
     }
 
     function countAllComments(post: PostDTO): number {
@@ -112,7 +112,7 @@ const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDT
                         <Button
                         variant={"link"}
                         className={`!h-auto !p-0 block text-base font-bold text-secondary !text-left !no-underline ${isPreviewed ? 'whitespace-normal hover:opacity-100 pointer-events-none' : 'line-clamp-1 truncate'}`}
-                        onClick={() => !isPreviewed && openPreview(post)}
+                        onClick={() => !isPreviewed && togglePreview()}
                         >
                             {post.title}
                         </Button>
@@ -200,7 +200,10 @@ const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDT
                                     <AlertDialogFooter>
                                         <AlertDialogCancel>Cancel</AlertDialogCancel>
 
-                                        <AlertDialogAction onClick={() => deletePost(post.id)}>
+                                        <AlertDialogAction onClick={() => {
+                                            deletePost(post.id);
+                                            togglePreview(false);
+                                        }}>
                                         Continue
                                         </AlertDialogAction>
                                     </AlertDialogFooter>
@@ -249,7 +252,7 @@ const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDT
             <div className={`absolute bottom-0 left-0 w-full p-4 pt-8 flex justify-between items-center gap-4 bg-gradient-to-b from-transparent via-25% via-primary to-primary ${isPreviewed && '!relative !p-0'}`}>
                 <Button
                 className={`!p-0 !h-fit ${isPreviewed && 'pointer-events-none'}`}
-                onClick={() => openPreview(post)}>
+                onClick={() => togglePreview()}>
                     <div className="flex items-center gap-2">
                         <svg className='size-6' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M22 8V6H21V5H20V4H18V3H15V2H9V3H6V4H4V5H3V6H2V8H1V14H2V16H3V18H2V19H1V21H6V20H7V19H9V20H15V19H18V18H20V17H21V16H22V14H23V8H22ZM16 13V12H15V10H16V9H18V10H19V12H18V13H16ZM10 12V10H11V9H13V10H14V12H13V13H11V12H10ZM8 9V10H9V12H8V13H6V12H5V10H6V9H8Z" fill="white"/>
@@ -273,7 +276,7 @@ const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDT
         {/* post preview modal */}
         <PostPreviewModal
         isOpen={isPreviewOpen}
-        togglePreview={openPreview}
+        togglePreview={togglePreview}
         post={post}
         openModalForEdit={openModalForEdit}
         />

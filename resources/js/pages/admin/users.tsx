@@ -28,7 +28,6 @@ const Users = () => {
   };
 
   const openModalForEdit = (user: any) => {
-    console.log(userForEdit)
     setUserForEdit(user);
     setIsOpen(true);
   };
