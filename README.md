@@ -2,45 +2,23 @@
 
 A full-stack web application built with React (frontend) and Laravel 12 (backend), designed to centralize knowledge, improve collaboration, and streamline problem-solving within an organization. The platform allows employees to create, organize, and search posts by sector, significantly reducing duplicated effort and making it easier to find solutions to recurring issues.
 
+## Table of Contents
+- [Overview](#overview)
+- [Technologies](#technologies)
+- [Requirements](#requirements)
+- [Installation](#installation)
+  - [Setup .env file](#setup-env-file)
+  - [Database setup](#database-setup)
+- [Running the application](#running-the-application)
+  - [Test as admin](#test-as-admin)
+
 # Overview
 
 Users can register, edit their profiles, and access sectors relevant to their department. Within each sector, users can publish posts (including title, text, images, and file attachments), engage in discussions, save posts, and follow topics of interest. While admins can manage sectors, users, and posts.
 
 A robust search and filtering system ensures quick retrieval of relevant content, helping teams save time and focus on real work.
 
-# Key Features
-
-### Post creation
-- Title, text content, images, and attachments (PDF, DOCX, ZIP, etc.)  
-- Tags and sector assignment for better organization
-
-### Post interaction
-- Commenting
-- Saving post  
-- Subscription to posts — users can follow topics and receive updates (notification delivery system prepared at the prototype level)  
-
-### Discussion status
-- Authors can change the status of a post (*active* / *closed*)  
-- Closed posts are archived and locked from new comments  
-
-### Search and filters
-- Full-text search by title, content, tags, or author  
-- Post filters by sector, status, date, and author  
-
-### User profile
-- Name, position, and profile image edit
-- Password reset form
-
-### Admin & Moderator Panel
-- Create and manage sectors (name, description, color, members)
-- Choose between seeing all sectors or the ones they work in = via sidebar toggle button  
-- Manage users, edit their details, and assign roles  
-- Edit and remove posts
-
-### Responsive UI
-- Clean, modern, and intuitive interface optimized for both desktop and mobile devices  
-
-# Technologies used:
+# Technologies
 - React 19
 - TypeScript
 - Inertia.js
@@ -80,24 +58,33 @@ cp .env.example .env
 ```
 Make sure to configure your database in .env:
 ```bash
-DB_DATABASE=organizimo
+DB_DATABASE=db_name_you_chose
 DB_USERNAME=root
 DB_PASSWORD=
 ```
 
 ## Database setup
-Run the migrations and seeders to prepare the database:
+Before running migrations, create a database and ensure its name matches the ```DB_DATABASE``` value defined in your ```.env``` file.
+
+Run the migrations and seeders to populate the database:
 ```bash
 php artisan migrate --seed
 ```
 
-## Running the application
+# Running the application
 Use the Composer script that runs backend (Laravel), frontend (Vite), and queue worker together:
 ```bash
 composer dev
 ```
-Run Laravel and Vite in separate terminals:
+Or run Laravel and Vite in separate terminals:
 ```bash
 php artisan serve
 npm run dev
+```
+
+## Test as admin
+You can use the admin account created with migrations to access all features of the app:
+```bash
+admin@admin.com
+Admin123!
 ```
