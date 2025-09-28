@@ -56,9 +56,18 @@ Copy the example environment file and adjust the settings:
 ```bash
 cp .env.example .env
 ```
-Make sure to configure your database in .env:
+
+Generate an application key (required for Laravel sessions and encryption):
 ```bash
-DB_DATABASE=db_name_you_chose
+php artisan key:generate
+```
+
+Then configure your database in ```.env```:
+```bash
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=organizimo
 DB_USERNAME=root
 DB_PASSWORD=
 ```
