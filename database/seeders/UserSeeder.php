@@ -17,9 +17,9 @@ class UserSeeder extends Seeder
             // creating an admin user first
             $user = new User();
             $user->name = Faker::create()->name();
-            $user->email = Faker::create()->unique()->safeEmail();
+            $user->email = 'admin@admin.com';
             $user->position = Faker::create()->jobTitle();
-            $user->password = bcrypt('password');
+            $user->password = bcrypt('Admin123!');
             $user->role_id = 2; // admin
             $user->image = 'https://avatar.iran.liara.run/public';
             $user->save();
