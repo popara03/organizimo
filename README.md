@@ -30,6 +30,7 @@ A robust search and filtering system ensures quick retrieval of relevant content
   - Axios
   - Shadcn
   - Sonner
+  - FakerPHP
 
 # Requirements
 - PHP 8.2+
