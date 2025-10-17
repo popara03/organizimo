@@ -18,9 +18,11 @@ class PostSeeder extends Seeder
             $user = User::inRandomOrder()->first(); // get a random user
             $group = $user->groups()->inRandomOrder()->first(); // get a random group from that user
 
+            $faker = Faker::create(); // create a Faker instance
+
             $post = Post::create([
-                'title' => Faker::create()->sentence(rand(5, 10)),
-                'content' => Faker::create()->paragraph(rand(4, 10)),
+                'title' => $faker->sentence(rand(5, 10)),
+                'content' => $faker->paragraph(rand(4, 10)),
                 'user_id' => $user->id,
                 'group_id' => $group->id,
                 'status' => (bool) rand(0, 1)
@@ -41,7 +43,7 @@ class PostSeeder extends Seeder
 
                 //add one single comment
                 $post->comments()->create([
-                    'content' => Faker::create()->sentence(rand(5, 10)),
+                    'content' => $faker->sentence(rand(5, 10)),
                     'user_id' => $group->users()->inRandomOrder()->first()->id, // comment by a random user from the group
                     'post_id' => $post->id,
                     'parent_id' => null,
@@ -49,8 +51,8 @@ class PostSeeder extends Seeder
 
                 // add a reply to the comment
                 $post->comments()->create([
-                    'content' => Faker::create()->sentence(rand(5, 10)),
-                    'user_id' => $group->users()->whereNotIn('id', [$post->comments()->first()->user_id])->inRandomOrder()->first()->id, // comment by a random user from the group that's different from the parent comment author
+                    'content' => $faker->sentence(rand(5, 10)),
+                    'user_id' => $group->users()->whereNotIn('users.id', [$post->comments()->first()->user_id])->inRandomOrder()->first()->id, // comment by a random user from the group, that's not the parent comment author
                     'post_id' => $post->id,
                     'parent_id' => $post->comments()->first()->id,
                 ]);

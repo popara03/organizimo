@@ -14,11 +14,13 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         try{
+            $faker = Faker::create();
+
             // creating an admin user first
             $user = new User();
-            $user->name = Faker::create()->name();
+            $user->name = $faker->name();
             $user->email = 'admin@admin.com';
-            $user->position = Faker::create()->jobTitle();
+            $user->position = $faker->jobTitle();
             $user->password = bcrypt('Admin123!');
             $user->role_id = 2; // admin
             $user->image = 'https://avatar.iran.liara.run/public';
@@ -27,9 +29,9 @@ class UserSeeder extends Seeder
             // creating 10 regular users
             for($i=0; $i<10; $i++){
                 $user = new User();
-                $user->name = Faker::create()->name();
-                $user->email = Faker::create()->unique()->safeEmail();
-                $user->position = Faker::create()->jobTitle();
+                $user->name = $faker->name();
+                $user->email = $faker->unique()->safeEmail();
+                $user->position = $faker->jobTitle();
                 $user->password = bcrypt('password');
                 $user->role_id = 1; // user
                 $user->image = 'https://avatar.iran.liara.run/public';
