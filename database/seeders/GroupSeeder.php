@@ -20,7 +20,7 @@ class GroupSeeder extends Seeder
             'color' => '#9EB41D',
         ],
         [
-            'name' => 'Random',
+            'name' => 'Events',
             'color' => '#C336BE',
         ]
     ];
@@ -38,14 +38,16 @@ class GroupSeeder extends Seeder
     public function run(): void
     {
         try {
+            $faker = Faker::create();
+            
             // Creating FFA groups first
             foreach (self::FFA_GROUPS as $group) {
-                Group::create(['name' => $group['name'], 'color' => $group['color']], 'is_ffa', true);
+                Group::create(['name' => $group['name'], 'color' => $group['color'], 'is_ffa' => true]);
             }
 
             // Creating groups with selected users
             foreach (self::OTHER_GROUPS as $group) {
-                $group = Group::create(['name' => $group, 'color' => Faker::create()->safeHexColor(), 'is_ffa' => false]);
+                $group = Group::create(['name' => $group, 'color' => $faker->safeHexColor(), 'is_ffa' => false]);
 
                 // Creating group_user pivot entries
                 $users = User::inRandomOrder()->take(rand(2, 4))->get();    // order randomly and then take 2 to 4 users

@@ -24,7 +24,7 @@ class PostSeeder extends Seeder
                 'title' => $faker->sentence(rand(5, 10)),
                 'content' => $faker->paragraph(rand(4, 10)),
                 'user_id' => $user->id,
-                'group_id' => $group->id,
+                'group_id' => $group->id ? $group->id : 1,  // if user has no group, assign to General group (id 1)
                 'status' => (bool) rand(0, 1)
             ]);
 
