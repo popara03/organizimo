@@ -77,9 +77,7 @@ class GroupSeeder extends Seeder
             
             if($orphanedUsers->count() > 0) {
                 foreach ($orphanedUsers as $u){
-                    if($u->groups()->count() == 0){
-                        $u->groups()->attach(Group::where('is_ffa', false)->inRandomOrder()->first()->id);
-                    }
+                    $u->groups()->attach(Group::where('is_ffa', false)->inRandomOrder()->first()->id);
                 }
             }
         } catch (\Exception $e) {
