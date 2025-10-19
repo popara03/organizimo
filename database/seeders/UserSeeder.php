@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
             $user->position = $faker->jobTitle();
             $user->password = bcrypt('Admin123!');
             $user->role_id = 2; // admin
-            $user->image = 'https://avatar.iran.liara.run/public';
+            $user->image = null;
             $user->save();
 
             // creating 10 regular users
@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
                 $user->position = $faker->jobTitle();
                 $user->password = bcrypt('password');
                 $user->role_id = 1; // user
-                $user->image = 'https://avatar.iran.liara.run/public';
+                $user->image = null;
                 $user->save();
             }
         } catch (\Exception $e) {
