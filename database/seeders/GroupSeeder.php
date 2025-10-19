@@ -55,20 +55,32 @@ class GroupSeeder extends Seeder
     public function run(): void
     {
         try {
-            $faker = Faker::create();
-
             // Creating FFA groups first
-            foreach (self::FFA_GROUPS as $group) {
-                Group::create(['name' => $group['name'], 'color' => $group['color'], 'is_ffa' => true]);
+            foreach (self::FFA_GROUPS as $g) {
+                Group::create(['name' => $g['name'], 'color' => $g['color'], 'is_ffa' => true]);
             }
 
             // Creating groups with selected users
-            foreach (self::OTHER_GROUPS as $group) {
-                $group = Group::create(['name' => $group['name'], 'color' => $group['color'], 'is_ffa' => false]);
+            foreach (self::OTHER_GROUPS as $g) {
+                $group = Group::create(['name' => $g['name'], 'color' => $g['color'], 'is_ffa' => false]);
 
                 // Creating group_user pivot entries
-                $users = User::inRandomOrder()->take(rand(2, 4))->get();    // order randomly and then take 2 to 4 users
+                $users = User::inRandomOrder()->take(rand(2, 4))->get();    // pick 2 to 4 random users
                 $group->users()->attach($users);
+            }
+
+            // Ensuring all users are in at least one non-FFA group
+            $orphanedUsers = User::whereNotIn('id', function($query) {
+                $query->select('user_id')
+                      ->from('group_user');
+            })->get();
+            
+            if($orphanedUsers->count() > 0) {
+                foreach ($orphanedUsers as $u){
+                    if($u->groups()->count() == 0){
+                        $u->groups()->attach(Group::where('is_ffa', false)->inRandomOrder()->first()->id);
+                    }
+                }
             }
         } catch (\Exception $e) {
             echo "Error seeding groups: " . $e->getMessage();
