@@ -132,4 +132,9 @@
     margin-right: 0 !important;
     overflow-y: auto !important;
   }
+
+  /* yet-another-react-lightbox */
+  .yarl__icon * {
+    color: white;
+  }
 }

@@ -37,9 +37,18 @@ import Post from '@/components/custom/post/post';
 import PostsProvider, { PostsContext } from '@/providers/postsProvider';
 import PostCreateModal from '@/components/custom/post/postCreateModal';
 
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import "yet-another-react-lightbox/plugins/thumbnails.css";
+import Download from "yet-another-react-lightbox/plugins/download";
+import Counter from 'yet-another-react-lightbox/plugins/counter';
+import "yet-another-react-lightbox/plugins/counter.css";
+
 function DashboardContent() {
     // context
-    const { posts, setPosts } = useContext(PostsContext);
+    const { posts, setPosts, lightboxIndex, setLightboxIndex, lightboxSlides } = useContext(PostsContext);
 
     // post create/edit modal
     const [openModal, setOpenModal] = useState<boolean>(false);
@@ -339,10 +348,10 @@ function DashboardContent() {
 
         {/* posts */}
         <div className={`relative w-full py-8 flex flex-wrap gap-4 ${processing && ''}`}>
-            {posts.length > 0 ? posts.map((post:any, index:number) => (
+            {posts.length > 0 ? posts.map((post:any) => (
                 <Post 
-                key={index} 
-                post={post} 
+                key={post.id}
+                post={post}
                 openModalForEdit={openModalForEdit}
                 className={`${processing && 'blur-xs'}`}
                 />
@@ -371,6 +380,15 @@ function DashboardContent() {
                 </svg>
             </Button>
         </div>
+
+        {/* lightbox */}
+        <Lightbox
+        index={lightboxIndex}
+        slides={lightboxSlides}
+        open={lightboxIndex >= 0}
+        close={() => setLightboxIndex(-1)}
+        plugins={[Counter, Fullscreen, Download, Thumbnails]}
+        />
     </div>
     );
 }

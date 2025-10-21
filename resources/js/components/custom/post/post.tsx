@@ -55,7 +55,7 @@ type PostDTO = {
 const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDTO, isPreviewed?: boolean, openModalForEdit: (post: PostDTO) => void, className?: string }) => {
     // context
     const ctx = useContext(PostsContext);
-    const { savePost, followPost, changeStatus, deletePost } = ctx;
+    const { savePost, followPost, changeStatus, deletePost, setLightboxIndex, setLightboxSlides } = ctx;
 
     // active user
     const {props} : any = usePage();
@@ -218,34 +218,35 @@ const Post = ({ post, isPreviewed, openModalForEdit, className }: { post: PostDT
             {/* body */}
             <div className='flex-1 flex flex-col gap-4 text-secondary'>
                 <span className="text-sm text-inherit line-clamp-10">{post.content}</span>
-                {
-                    post.files && post.files.length > 0 && post.files.some(file => file.type === "image") && (
-                    <div className='w-full flex flex-wrap gap-2'>
-                        { post.files.map((file) => (
-                            file.type === "image" && (
-                                <a href={`/storage/${file.path}`} target="_blank" key={file.id}>
-                                    <img src={`/storage/${file.path}`} alt={file.name} className={`w-20 h-auto aspect-square rounded-md object-cover ${isPreviewed && 'w-48'}`} />
-                                </a>
-                            )
-                        ))}
-                    </div>
-                    )
-                }
 
-                {
-                    post.files && post.files.length > 0 && post.files.some(file => file.type === "document") && (
-                    <div className='w-full flex flex-col gap-2'>
-                        { post.files.map((file) => (
-                            file.type !== "image" && (
-                                <a key={file.id} href={`/storage/${file.path}`} target="_blank" className="w-fit flex items-center gap-2">
-                                    <FileIcon className='size-4 *:fill-accent-blue' />
-                                    <span className='text-sm text-secondary'>{file.name}</span>
-                                </a>
+                { post.files && post.files.length > 0 && post.files.some(file => file.type === "image") && (
+                    <div className='w-full flex flex-wrap gap-2'>
+                        { post.files.filter(file => file.type === "image").map((file, i) => (
+                                <img
+                                    key={file.id}
+                                    src={`/storage/${file.path}`}
+                                    alt={file.name}
+                                    onClick={() => {
+                                        setLightboxIndex(i);
+                                        setLightboxSlides(post.files.filter(f => f.type === "image").map(f => ({ src: `/storage/${f.path}` })));
+                                    }}
+                                    className={`w-20 h-auto aspect-square rounded-md object-cover ${isPreviewed && 'w-48'} cursor-pointer`}
+                                />
                             )
+                        )}
+                    </div>
+                )}
+
+                { post.files && post.files.length > 0 && post.files.some(file => file.type === "document") && (
+                    <div className='w-full flex flex-col gap-2'>
+                        { post.files.filter(file => file.type === "document").map((file) => (
+                            <a key={file.id} href={`/storage/${file.path}`} target="_blank" className="w-fit flex items-center gap-2">
+                                <FileIcon className='size-4 *:fill-accent-blue' />
+                                <span className='text-sm text-secondary'>{file.name}</span>
+                            </a>
                         ))}
                     </div>
-                    )
-                }
+                )}
             </div>
 
             {/* footer */}

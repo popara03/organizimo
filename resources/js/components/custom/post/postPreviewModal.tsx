@@ -22,7 +22,7 @@ type PostPreviewModalProps = {
     openModalForEdit: (post:any) => void;
 }
 
-const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit } : PostPreviewModalProps) => {
+const PostPreviewModal = ({ isOpen, togglePreview, post, openModalForEdit} : PostPreviewModalProps) => {
     const { posts, setPosts } = useContext(PostsContext);
     const [newComment, setNewComment] = useState<string>("");
 

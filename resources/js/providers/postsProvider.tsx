@@ -117,8 +117,16 @@ const PostsProvider = ({ children } : { children: React.ReactNode }) => {
         setPosts((prevPosts) => prevPosts.map((post) => post.id === updatedPost.id ? updatedPost : post));
     }
 
+    // lightbox for images
+    const [lightboxIndex, setLightboxIndex] = useState(-1);
+    const [lightboxSlides, setLightboxSlides] = useState<any>([]);
+
     return (
         <PostsContext.Provider value={{
+            lightboxIndex,
+            setLightboxIndex,
+            lightboxSlides,
+            setLightboxSlides,
             posts,
             setPosts,
             savePost,
