@@ -74,9 +74,9 @@ DB_PASSWORD=
 ```
 
 ## Database setup
-Before running migrations, create a database and ensure its name matches the ```DB_DATABASE``` value defined in your ```.env``` file.
+Before running migrations, ensure the ```DB_DATABASE``` value defined in your ```.env``` file is set.
 
-Run the migrations and seeders to populate the database:
+Run the migrations and seeders to populate the database (you'll be asked to confirm the creation of it):
 ```bash
 php artisan migrate --seed
 ```
