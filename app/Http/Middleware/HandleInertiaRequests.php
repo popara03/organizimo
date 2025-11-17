@@ -39,16 +39,31 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         // authenticated user with role relation
-        $active_user = Auth::user() ? Auth::user() : null;
-        if ($active_user && $active_user instanceof User) {
-            $active_user->load('role');
-        }
+        $active_user = Auth::user();
+        assert($active_user instanceof User || $active_user === null);  //type check for IDE in development
+        $active_user?->load('role');
 
         // if admin, load all groups
-        $allGroups = [];
-        if( $active_user && $active_user instanceof User && $active_user->role?->name === 'admin' ) {
-            $allGroups = Group::all();
-        }
+        $allGroups = $active_user?->role->name === 'admin' ? Group::all() : [];
+
+        // load last 10 notifications
+        $notifications = $active_user?->notifications()
+        ->orderByDesc('created_at')
+        ->take(10)
+        ->get()
+        ->map(function ($n){
+            return [
+                'id' => $n->id,
+                'type' => $n->type->name,
+                'post_id' => $n->post_id,
+                'comment_id' => $n->comment_id,
+                'message' => $n->message,
+                'is_read' => (bool) $n->is_read,
+                'created_at' => $n->created_at->toISOString(),
+                'server_time' => now()->toISOString()
+            ];
+        });
+
 
         return [
             ...parent::share($request),
@@ -57,6 +72,7 @@ class HandleInertiaRequests extends Middleware
             // authenticated user data
             'active_user' => $active_user,
             'allGroups' => $allGroups,
+            'notifications' => $notifications,
         ];
     }
 }

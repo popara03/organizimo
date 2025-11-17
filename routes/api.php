@@ -3,6 +3,7 @@
 use App\Http\Controllers\admin\GroupController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
@@ -46,6 +47,10 @@ Route::middleware('auth')->group(function(){
 
     Route::post('delete-comment/{id}', [CommentController::class, 'destroy'])
         ->name('delete-comment');
+
+    // notifications
+    Route::get('notifications', [NotificationController::class, 'index'])
+        ->name('notifications');
 });
 
 // Admin dashboard endpoints

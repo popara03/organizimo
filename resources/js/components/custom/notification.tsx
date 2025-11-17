@@ -2,6 +2,7 @@ import {Link} from '@inertiajs/react'
 import {Button} from '@/components/ui/button'
 import { useContext } from 'react'
 import { NotificationContext, NotificationProps } from '@/providers/notificationProvider'
+import timeAgo from '@/lib/timeAgo'
 
 const Notification = ( props: NotificationProps) => {
 
@@ -18,8 +19,8 @@ const Notification = ( props: NotificationProps) => {
     className={`w-full px-4 py-2 flex justify-between items-center gap-2 hover:opacity-100 ${props.is_read ? "" : "bg-accent-purple/50"}`}
     >
         <div className="min-w-0 w-full flex flex-col gap-2">
-            <span className="text-sm text-secondary line-clamp-2">{props.text}</span>
-            <span className="text-xs text-secondary/50">{props.time}</span>
+            <span className="text-sm text-secondary line-clamp-2">{props.message}</span>
+            <span className="text-xs text-secondary/50">{timeAgo(props.created_at, props.server_time)}</span>
         </div>
 
         <div className="flex gap-2">
