@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             GroupSeeder::class,
             PostSeeder::class,
+            NotificationTypeSeeder::class,
+            NotificationSeeder::class,
         ]);
     }
 }

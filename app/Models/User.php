@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-
 use App\Models\Group;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -61,5 +60,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Post::class, 'user_post_following')
         ->withTimestamps();
+    }
+
+    public function notifications() : BelongsToMany {
+        return $this->belongsToMany(Notification::class)->withPivot('is_read')->withTimestamps();
     }
 }
