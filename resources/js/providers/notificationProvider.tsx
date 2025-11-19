@@ -8,8 +8,15 @@ export const NotificationContext = createContext<any>(null);
 export type NotificationProps = {
     id: number
     type: string
-    post_id: number | null
+    post: {
+        id: number
+        title: string
+    } | null
     comment_id: number | null
+    user: {
+        id: number
+        name: string
+    } | null
     message: string | null
     is_read: boolean
     created_at: string
@@ -19,8 +26,9 @@ export type NotificationProps = {
 const NotificationProvider = ({ children }: { children: ReactNode }) => {
     // get last 10 notifications
     const [notifications, setNotifications] = useState<NotificationProps[]>(usePage().props.notifications as NotificationProps[] || []);
-    console.log("Notifications from context:", notifications);
     const [isAllRead, setIsAllRead] = useState(false);
+
+    console.log("Notifications from context:", notifications);
 
     //on every notification change, re-check if all are read
     useEffect(() => {

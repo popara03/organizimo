@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Models\Group;
+use App\Models\Notification;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -55,15 +57,23 @@ class HandleInertiaRequests extends Middleware
             return [
                 'id' => $n->id,
                 'type' => $n->type->name,
-                'post_id' => $n->post_id,
+                'post' => $n->post_id ?
+                    [
+                        'id' => $n->post_id,
+                        'title' => Post::find($n->post_id)->title
+                    ] : null,
                 'comment_id' => $n->comment_id,
+                'user' => $n->user_id ?
+                    [
+                        'id' => $n->user_id,
+                        'name' => User::find($n->user_id)?->name,
+                    ] : null,
                 'message' => $n->message,
                 'is_read' => (bool) $n->is_read,
                 'created_at' => $n->created_at->toISOString(),
                 'server_time' => now()->toISOString()
             ];
         });
-
 
         return [
             ...parent::share($request),

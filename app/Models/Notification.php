@@ -14,7 +14,7 @@ class Notification extends Model
         'type_id',
         'post_id',
         'comment_id',
-        'action_author_id',
+        'user_id',
         'message',
     ];
 

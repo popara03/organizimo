@@ -13,13 +13,34 @@ const Notification = ( props: NotificationProps) => {
 
     const { markAsRead, deleteNotification } = ctx;
 
+    function renderMessage(type: string) {
+        switch (type) {
+            case 'general' :
+                return (
+                    <>
+                    {props.message}
+                    </>
+                );
+
+            case 'post_comment':
+                return (
+                    <>
+                    <strong className='text-secondary'>{props.user?.name}</strong> commented on your post "<strong className='text-secondary'>{props.post?.title}</strong>"
+                    </>
+                );
+            // Add more cases for different notification types as needed
+        }
+    }
+
     return (
     <Link
-    href={`/posts/${props.post_id}`}
-    className={`w-full px-4 py-2 flex justify-between items-center gap-2 hover:opacity-100 ${props.is_read ? "" : "bg-accent-purple/50"}`}
+    href = {`${props.post?.id ? "/posts/" + props.post.id : ''}`}
+    className = {`w-full px-4 py-2 flex justify-between items-center gap-2 hover:opacity-100 ${props.is_read ? "" : "bg-accent-purple/50"}`}
     >
         <div className="min-w-0 w-full flex flex-col gap-2">
-            <span className="text-sm text-secondary line-clamp-2">{props.message}</span>
+            <span className="text-sm text-secondary line-clamp-2">
+                {renderMessage(props.type)}
+            </span>
             <span className="text-xs text-secondary/50">{timeAgo(props.created_at, props.server_time)}</span>
         </div>
 
