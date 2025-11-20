@@ -54,13 +54,20 @@ class HandleInertiaRequests extends Middleware
         ->take(10)
         ->get()
         ->map(function ($n){
+            $post = Post::find($n->post_id);
+            
             return [
                 'id' => $n->id,
                 'type' => $n->type->name,
-                'post' => $n->post_id ?
+                'post' => $post ?
                     [
-                        'id' => $n->post_id,
-                        'title' => Post::find($n->post_id)->title
+                        'id' => $post->id,
+                        'title' => $post->title,
+                        'status' => $post->status,
+                        'author' => [
+                            'id' => $post->user->id,
+                            'name' => $post->user->name,
+                        ],
                     ] : null,
                 'comment_id' => $n->comment_id,
                 'user' => $n->user_id ?
@@ -71,7 +78,7 @@ class HandleInertiaRequests extends Middleware
                 'message' => $n->message,
                 'is_read' => (bool) $n->is_read,
                 'created_at' => $n->created_at->toISOString(),
-                'server_time' => now()->toISOString()
+                'server_time' => now()->toISOString(),
             ];
         });
 

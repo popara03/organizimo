@@ -102,7 +102,7 @@ const Nav = () => {
                         className="w-96 max-h-96 h-96 p-0 pb-10 flex flex-col bg-primary rounded-none rounded-b-2xl overflow-y-auto scrollbar"
                         sideOffset={14}
                         >
-                            {notifications.length === 0 && (
+                            {notifications?.length === 0 && (
                                 <p className="w-full h-full flex justify-center items-center px-4 py-2 text-secondary text-center">Crickets… no notifications here 🦗</p>
                             )}
 

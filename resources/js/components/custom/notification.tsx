@@ -1,4 +1,4 @@
-import {Link} from '@inertiajs/react'
+import {Link, usePage} from '@inertiajs/react'
 import {Button} from '@/components/ui/button'
 import { useContext } from 'react'
 import { NotificationContext, NotificationProps } from '@/providers/notificationProvider'
@@ -12,30 +12,35 @@ const Notification = ( props: NotificationProps) => {
         throw new Error('Notification must be used within a NotificationProvider');
 
     const { markAsRead, deleteNotification } = ctx;
+    const { active_user } = usePage().props;
 
     function renderMessage(type: string) {
         switch (type) {
             case 'general' :
-                return (
-                    <>
-                    {props.message}
-                    </>
-                );
+                return props.message;
 
             case 'post_comment':
                 return (
                     <>
-                    <strong className='text-secondary'>{props.user?.name}</strong> commented on your post "<strong className='text-secondary'>{props.post?.title}</strong>"
+                    <span className='text-secondary font-semibold'>{props.user?.name}</span> commented on your post "<span className='text-secondary'>{props.post?.title}</span>"
                     </>
                 );
-            // Add more cases for different notification types as needed
+
+            case 'post_status_change' :
+                return (
+                    <>
+                    <span className='text-secondary font-semibold'>{props.user?.name}</span> {props.post?.status ? "closed" : "reopened"} the discussion "<span className='text-secondary'>{props.post?.title}</span>"
+                    </>
+                );
+
+            // comment reply
         }
     }
 
     return (
     <Link
     href = {`${props.post?.id ? "/posts/" + props.post.id : ''}`}
-    className = {`w-full px-4 py-2 flex justify-between items-center gap-2 hover:opacity-100 ${props.is_read ? "" : "bg-accent-purple/50"}`}
+    className = {`w-full px-4 py-2 flex justify-between items-center gap-2 hover:opacity-100 ${props.is_read ? "" : "bg-accent-lime/40"}`}
     >
         <div className="min-w-0 w-full flex flex-col gap-2">
             <span className="text-sm text-secondary line-clamp-2">

@@ -1,5 +1,5 @@
-import Notification from "@/components/custom/notification";
 import { usePage } from "@inertiajs/react";
+import axios from "axios";
 import { useEffect, useState, createContext, ReactNode } from "react";
 
 // Context izvan komponente
@@ -11,6 +11,7 @@ export type NotificationProps = {
     post: {
         id: number
         title: string
+        status: boolean
     } | null
     comment_id: number | null
     user: {
@@ -25,18 +26,27 @@ export type NotificationProps = {
 
 const NotificationProvider = ({ children }: { children: ReactNode }) => {
     // get last 10 notifications
-    const [notifications, setNotifications] = useState<NotificationProps[]>(usePage().props.notifications as NotificationProps[] || []);
+    const initialNotifications = usePage().props.notifications as NotificationProps[];
+    const [notifications, setNotifications] = useState<NotificationProps[]>(initialNotifications);
     const [isAllRead, setIsAllRead] = useState(false);
 
-    console.log("Notifications from context:", notifications);
-
-    //on every notification change, re-check if all are read
+    //on load & redirect, set notifications and check isAllRead
     useEffect(() => {
-        setIsAllRead(notifications.every((n) => n.is_read));
-    }, [notifications])
+        setNotifications(initialNotifications);
+        setIsAllRead(notifications?.every((n) => n.is_read));
+    }, [initialNotifications]);
 
     const markAsRead = (id: number) => {
         // TODO: Make API call to mark notification as read
+        axios.post(`/notifications/${id}/mark-as-read`)
+        .then((response) => {
+            // Handle success if needed
+
+        })
+        .catch((error) => {
+            // Handle error if needed
+            console.error("Error marking notification as read", error);
+        });
 
         // Update local state instead of re-fetching
         const n  = notifications.find((n) => n.id === id);
