@@ -106,7 +106,7 @@ const Nav = () => {
                                 <p className="w-full h-full flex justify-center items-center px-4 py-2 text-secondary text-center">Crickets… no notifications here 🦗</p>
                             )}
 
-                            {notifications.map(( notification : NotificationProps) => (
+                            {notifications?.map(( notification : NotificationProps) => (
                                 <DropdownMenuItem key={notification.id} className="p-0 flex flex-col gap-2 rounded-none border-b border-secondary/10 hover:bg-secondary/5">
                                     <Notification
                                     {...notification}

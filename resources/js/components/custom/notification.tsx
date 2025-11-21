@@ -1,20 +1,17 @@
-import {Link, usePage} from '@inertiajs/react'
-import {Button} from '@/components/ui/button'
+import { Link } from '@inertiajs/react'
+import { Button } from '@/components/ui/button'
 import { useContext } from 'react'
 import { NotificationContext, NotificationProps } from '@/providers/notificationProvider'
 import timeAgo from '@/lib/timeAgo'
 
 const Notification = ( props: NotificationProps) => {
-
     const ctx = useContext(NotificationContext);
-    
     if (!ctx)
         throw new Error('Notification must be used within a NotificationProvider');
 
     const { markAsRead, deleteNotification } = ctx;
-    const { active_user } = usePage().props;
 
-    function renderMessage(type: string) {
+    function renderMessage(type: string) { 
         switch (type) {
             case 'general' :
                 return props.message;
@@ -22,7 +19,7 @@ const Notification = ( props: NotificationProps) => {
             case 'post_comment':
                 return (
                     <>
-                    <span className='text-secondary font-semibold'>{props.user?.name}</span> commented on your post "<span className='text-secondary'>{props.post?.title}</span>"
+                    <span className='text-secondary font-semibold'>{props.user?.name}</span> commented on the post "<span className='text-secondary'>{props.post?.title}</span>"
                     </>
                 );
 
@@ -33,7 +30,15 @@ const Notification = ( props: NotificationProps) => {
                     </>
                 );
 
-            // comment reply
+            case 'comment_reply' :
+                return (
+                    <>
+                    <span className='text-secondary font-semibold'>{props.user?.name}</span> replied to your comment on the post "<span className='text-secondary'>{props.post?.title}</span>"
+                    </>
+                );
+
+            default :
+                return "You have a new notification.";
         }
     }
 
@@ -54,7 +59,7 @@ const Notification = ( props: NotificationProps) => {
             className="bg-secondary/5 cursor-pointer"
             onClick={(e) => {
                 e.preventDefault();
-                markAsRead(props.id);
+                markAsRead(props.id, props.is_read);
             }}
             >
                 {!props.is_read ? (

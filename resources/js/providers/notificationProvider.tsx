@@ -1,6 +1,7 @@
 import { usePage } from "@inertiajs/react";
 import axios from "axios";
 import { useEffect, useState, createContext, ReactNode } from "react";
+import { toast } from "sonner";
 
 // Context izvan komponente
 export const NotificationContext = createContext<any>(null);
@@ -30,35 +31,24 @@ const NotificationProvider = ({ children }: { children: ReactNode }) => {
     const [notifications, setNotifications] = useState<NotificationProps[]>(initialNotifications);
     const [isAllRead, setIsAllRead] = useState(false);
 
+    console.log("Notifications loaded in provider:", notifications);
+
     //on load & redirect, set notifications and check isAllRead
     useEffect(() => {
         setNotifications(initialNotifications);
         setIsAllRead(notifications?.every((n) => n.is_read));
     }, [initialNotifications]);
 
-    const markAsRead = (id: number) => {
+    const markAsRead = (id: number, isRead: boolean) => {
         // TODO: Make API call to mark notification as read
-        axios.post(`/notifications/${id}/mark-as-read`)
-        .then((response) => {
-            // Handle success if needed
-
+        axios.post(`/notifications/${id}/mark-as-read`, {is_read: !isRead})
+        .then(() => {
+            setNotifications(notifications.map((n) => n.id === id ? {...n, is_read: !isRead} : n));
+            toast.success("Notification status updated");
         })
-        .catch((error) => {
-            // Handle error if needed
-            console.error("Error marking notification as read", error);
+        .catch(() => {
+            toast.error("Error marking notification as read.");
         });
-
-        // Update local state instead of re-fetching
-        const n  = notifications.find((n) => n.id === id);
-        
-        if(n){
-            n.is_read = !n.is_read;
-            setNotifications([...notifications]);
-        }
-        else{
-            console.error("Notification with passed ID not found", id);
-        }
-        console.log("Mark notification as read", id);
     }
 
     const markAllAsRead = () => {

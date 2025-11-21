@@ -51,6 +51,8 @@ Route::middleware('auth')->group(function(){
     // notifications
     Route::get('notifications', [NotificationController::class, 'index'])
         ->name('notifications');
+
+    Route::post('notifications/{id}/mark-as-read', [NotificationController::class, 'update']);
 });
 
 // Admin dashboard endpoints

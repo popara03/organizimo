@@ -76,7 +76,7 @@ class HandleInertiaRequests extends Middleware
                         'name' => User::find($n->user_id)?->name,
                     ] : null,
                 'message' => $n->message,
-                'is_read' => (bool) $n->is_read,
+                'is_read' => (bool) $n->pivot->is_read,
                 'created_at' => $n->created_at->toISOString(),
                 'server_time' => now()->toISOString(),
             ];

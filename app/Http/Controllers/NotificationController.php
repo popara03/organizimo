@@ -3,7 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
+use App\Models\User;
+use BcMath\Number;
+use Error;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use phpDocumentor\Reflection\Types\Boolean;
 
 class NotificationController extends Controller
 {
@@ -44,7 +50,7 @@ class NotificationController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        
     }
 
     /**
@@ -52,7 +58,22 @@ class NotificationController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // validate input
+        if(!$id)
+            throw new Error("Notification ID is missing or invalid.");
+
+        $notification = Notification::findOrFail($id);
+        
+        $user = Auth::user();
+        assert($user instanceof User);
+        
+        $user->notifications()->updateExistingPivot($notification->id, [
+            'is_read' => $request['is_read']
+        ]);
+
+        return response()->json([
+            'message' => 'Notification updated successfully.'
+        ], 200);
     }
 
     /**
