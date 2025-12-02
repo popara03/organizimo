@@ -34,10 +34,6 @@ const NotificationProvider = ({ children }: { children: ReactNode }) => {
     const [isAllRead, setIsAllRead] = useState(false);
 
     useEffect(() => {
-        setNotifications([initialNotifications, ...pageNotifications].flat());
-    }, [initialNotifications, pageNotifications]);
-
-    useEffect(() => {
         setIsAllRead(notifications?.every((n) => n.is_read));
     }, [notifications]);
 
