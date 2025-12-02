@@ -50,6 +50,7 @@ class HandleInertiaRequests extends Middleware
 
         // load last 10 notifications
         $notifications = $active_user?->notifications()
+        ->with('usersNotified')
         ->orderByDesc('created_at')
         ->take(10)
         ->get()

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostController;
 use App\Http\Middleware\CheckUserRole;
 use Illuminate\Http\Request;
@@ -17,15 +18,19 @@ Route::get('/', function () {
 })->middleware('guest')->name('home');
 
 
+// authenticated routes
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', [PostController::class, 'index'])->name('dashboard');
 
     Route::get('profile', function(){
         return Inertia::render('settings/profile');
     })->name('profile');
+
+    Route::get('notifications', [NotificationController::class, 'index'])
+    ->name('notifications');
 });
 
-
+// admin routes
 Route::middleware(['auth', CheckUserRole::class])->group(function () {
     Route::get('admin', [AdminController::class, 'index'])->name('admin');
 

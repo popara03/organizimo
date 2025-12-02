@@ -49,10 +49,9 @@ Route::middleware('auth')->group(function(){
         ->name('delete-comment');
 
     // notifications
-    Route::get('notifications', [NotificationController::class, 'index'])
-        ->name('notifications');
-
-    Route::post('notifications/{id}/mark-as-read', [NotificationController::class, 'update']);
+    Route::post('notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
+    Route::post('notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+    Route::post('/notifications/{id}/delete', [NotificationController::class, 'destroy']);
 });
 
 // Admin dashboard endpoints

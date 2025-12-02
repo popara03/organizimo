@@ -58,6 +58,29 @@ class NotificationController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        if(!$id)
+            throw new Error("Notification ID is missing or invalid.");
+
+        $notification = Notification::findOrFail($id);
+
+        $user = Auth::user();
+        assert($user instanceof User);
+        $user->notifications()->detach($notification->id);
+
+        return response()->json([
+            'message' => 'Notification deleted successfully.'
+        ], 200);
+    }
+
+    public function markAsRead(Request $request, string $id){
         // validate input
         if(!$id)
             throw new Error("Notification ID is missing or invalid.");
@@ -76,11 +99,12 @@ class NotificationController extends Controller
         ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+    public function markAllAsRead(){
+        $user = Auth::user();
+        assert($user instanceof User);
+
+        $user->notifications()
+            ->wherePivot('is_read', false)
+            ->update(['is_read' => true]);
     }
 }
