@@ -23,17 +23,19 @@ export type NotificationProps = {
     is_read: boolean;
     created_at: string;
     server_time: string;
+    className?: string;
 };
 
 const NotificationProvider = ({ children }: { children: ReactNode }) => {
     // get last 10 notifications
     const initialNotifications = usePage().props.notifications as NotificationProps[];
-    const [notifications, setNotifications] = useState<NotificationProps[]>(initialNotifications);
+    const pageNotifications = (usePage().props.pageNotifications as NotificationProps[]) || [];
+    const [notifications, setNotifications] = useState<NotificationProps[]>([initialNotifications, ...pageNotifications].flat());
     const [isAllRead, setIsAllRead] = useState(false);
 
     useEffect(() => {
-        setNotifications(initialNotifications);
-    }, [initialNotifications]);
+        setNotifications([initialNotifications, ...pageNotifications].flat());
+    }, [initialNotifications, pageNotifications]);
 
     useEffect(() => {
         setIsAllRead(notifications?.every((n) => n.is_read));
@@ -46,8 +48,9 @@ const NotificationProvider = ({ children }: { children: ReactNode }) => {
         }
 
         try {
-            const r = await axios.post(`/notifications/${id}/mark-as-read`, { is_read: !isRead });
-            setNotifications(notifications.map((n) => (n.id === id ? { ...n, is_read: !isRead } : n)));
+            await axios.post(`/notifications/${id}/mark-as-read`, { is_read: !isRead });
+            const updatedNotifications = notifications.map((n) => (n.id === id ? { ...n, is_read: !isRead } : n));
+            setNotifications(updatedNotifications);
         } catch (error) {
             toast.error('Error marking notification as read.');
             throw error;

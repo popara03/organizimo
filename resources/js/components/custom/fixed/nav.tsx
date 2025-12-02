@@ -157,7 +157,7 @@ const Nav = () => {
                                         </p>
                                     )}
 
-                                    {notifications?.map((notification: NotificationProps) => (
+                                    {notifications?.slice(0, 10).map((notification: NotificationProps) => (
                                         <DropdownMenuItem
                                             key={notification.id}
                                             className="flex flex-col gap-2 rounded-none border-b border-secondary/10 p-0 hover:bg-secondary/5"

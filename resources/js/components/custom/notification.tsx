@@ -4,6 +4,37 @@ import { NotificationContext, NotificationProps } from '@/providers/notification
 import { Link } from '@inertiajs/react';
 import { useContext, useState } from 'react';
 
+export function renderMessage(props: NotificationProps) {
+    switch (props.type) {
+        case 'general':
+            return props.message;
+
+        case 'post_comment':
+            return (
+                <>
+                    <span className="font-semibold text-secondary">{props.user?.name}</span> commented on the post "
+                    <span className="text-secondary">{props.post?.title}</span>"
+                </>
+            );
+
+        case 'post_status_change':
+            return (
+                <>
+                    <span className="font-semibold text-secondary">{props.user?.name}</span> {props.post?.status ? 'closed' : 'reopened'} the
+                    discussion "<span className="text-secondary">{props.post?.title}</span>"
+                </>
+            );
+
+        case 'comment_reply':
+            return (
+                <>
+                    <span className="font-semibold text-secondary">{props.user?.name}</span> replied to your comment on the post "
+                    <span className="text-secondary">{props.post?.title}</span>"
+                </>
+            );
+    }
+}
+
 const Notification = (props: NotificationProps) => {
     const ctx = useContext(NotificationContext);
     if (!ctx) throw new Error('Notification must be used within a NotificationProvider');
@@ -11,41 +42,12 @@ const Notification = (props: NotificationProps) => {
     const { markAsRead, deleteNotification } = ctx;
     const [isProcessing, setIsProcessing] = useState(false);
 
-    function renderMessage(type: string) {
-        switch (type) {
-            case 'general':
-                return props.message;
-
-            case 'post_comment':
-                return (
-                    <>
-                        <span className="font-semibold text-secondary">{props.user?.name}</span> commented on the post "
-                        <span className="text-secondary">{props.post?.title}</span>"
-                    </>
-                );
-
-            case 'post_status_change':
-                return (
-                    <>
-                        <span className="font-semibold text-secondary">{props.user?.name}</span> {props.post?.status ? 'closed' : 'reopened'} the
-                        discussion "<span className="text-secondary">{props.post?.title}</span>"
-                    </>
-                );
-
-            case 'comment_reply':
-                return (
-                    <>
-                        <span className="font-semibold text-secondary">{props.user?.name}</span> replied to your comment on the post "
-                        <span className="text-secondary">{props.post?.title}</span>"
-                    </>
-                );
-        }
-    }
-
     return (
-        <div className={`flex w-full items-center justify-between gap-2 px-4 py-2 hover:opacity-100 ${props.is_read ? '' : 'bg-accent-lime/40'}`}>
+        <div
+            className={`flex w-full items-center justify-between gap-2 px-4 py-2 hover:opacity-100 ${props.is_read ? '' : 'bg-accent-lime/40'} ${props.className}`}
+        >
             <Link href={`${props.post?.id ? '/posts/' + props.post.id : ''}`} className="flex w-full min-w-0 flex-col gap-2">
-                <span className="line-clamp-2 text-sm text-secondary">{renderMessage(props.type)}</span>
+                <span className="line-clamp-2 text-sm text-secondary">{renderMessage(props)}</span>
                 <span className="text-xs text-secondary/50">{timeAgo(props.created_at, props.server_time)}</span>
             </Link>
 

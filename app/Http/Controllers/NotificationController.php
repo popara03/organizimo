@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use App\Models\Post;
 use App\Models\User;
 use BcMath\Number;
 use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 use phpDocumentor\Reflection\Types\Boolean;
 
 class NotificationController extends Controller
@@ -18,7 +20,45 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user();
+        assert($user instanceof User);
+
+        $pageNotifications = $user?->notifications()
+        ->with('usersNotified')
+        ->orderByDesc('created_at')
+        ->skip(10)
+        ->take(15)
+        ->get()
+        ->map(function ($n){
+            $post = Post::find($n->post_id);
+            
+            return [
+                'id' => $n->id,
+                'type' => $n->type->name,
+                'post' => $post ?
+                    [
+                        'id' => $post->id,
+                        'title' => $post->title,
+                        'status' => $post->status,
+                        'author' => [
+                            'id' => $post->user->id,
+                            'name' => $post->user->name,
+                        ],
+                    ] : null,
+                'comment_id' => $n->comment_id,
+                'user' => $n->user_id ?
+                    [
+                        'id' => $n->user_id,
+                        'name' => User::find($n->user_id)?->name,
+                    ] : null,
+                'message' => $n->message,
+                'is_read' => (bool) $n->pivot->is_read,
+                'created_at' => $n->created_at->toISOString(),
+                'server_time' => now()->toISOString(),
+            ];
+        });
+
+        return Inertia::render('notifications', ['pageNotifications' => $pageNotifications]);
     }
 
     /**
